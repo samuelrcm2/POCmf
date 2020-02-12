@@ -1,6 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
-import StructDomain
+from Domain import StructDomain
+from Domain import MaterialsDomain
 
 app = Flask(__name__)
 api = Api(app)
@@ -13,7 +14,14 @@ class Thickness(Resource):
         data = request.get_json()
         calculated_thickness = StructDomain.handle_MotorChain_calculation_types(data)
         return calculated_thickness, 200
+    
+class MaterialsControler(Resource):
+    def get (self):
+        materials = MaterialsDomain.Materials.get_all_materials()
+        return materials, 200
         
 api.add_resource(Thickness, '/thickness/')
+api.add_resource(MaterialsControler, '/materials/')
+
 if __name__ == "__main__" :
-    app.run(port=4200, debug=True)
+    app.run(port=5000)

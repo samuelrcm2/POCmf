@@ -1,5 +1,6 @@
 import unittest
-import StructDomain 
+from POCmf.Domain import StructDomain 
+from POCmf.Infra import MaterialInfra
 
 objectTest: object = {
     "radius": 5, # mm
@@ -54,9 +55,9 @@ class testStructDoamin(unittest.TestCase):
         motorChainTest.calculate_SM()
         self.assertAlmostEqual(motorChainTest.SM, 2.6667, 2)
         
-       
-
-        
+    def test_get_all_materials(self):
+        all_materials = MaterialInfra.get_all_materials()
+        self.assertEqual(all_materials, 1)
         
 if  __name__== '__main__':
     unittest.main()
