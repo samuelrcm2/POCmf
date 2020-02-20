@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import api from "Axios";
+import api from "./Axios";
 
 function App() {
   return (
