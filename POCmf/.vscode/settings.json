@@ -1,0 +1,14 @@
+{
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./POCmf",
+        "-p",
+        "*_test.py"
+    ],
+    "python.testing.debugPort": 4200,
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": true,
+    "python.pythonPath": "C:\\Users\\samue\\python.exe"
+}
