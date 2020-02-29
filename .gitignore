@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # dependencies
+app-client/node_modules
 /node_modules
 
 /.pnp
