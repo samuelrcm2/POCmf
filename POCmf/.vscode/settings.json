@@ -2,7 +2,7 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./POCmf",
+        ".",
         "-p",
         "*_test.py"
     ],

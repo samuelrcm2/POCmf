@@ -1,7 +1,7 @@
 import sqlite3
 
 def get_all_materials():
-    connection = sqlite3.connect("POCmf/Infra/POCmf_DB.db")
+    connection = sqlite3.connect("Infra/POCmf_DB.db")
     cursor = connection.cursor()    
     
     query = "SELECT * FROM materials"
@@ -14,7 +14,7 @@ def get_all_materials():
     return materials
     
 def get_material_by_id(Id):
-    connection = sqlite3.connect("POCmf/Infra/POCmf_DB.db")
+    connection = sqlite3.connect("Infra/POCmf_DB.db")
     cursor = connection.cursor()    
     
     query = "SELECT * FROM materials WHERE id=?"
