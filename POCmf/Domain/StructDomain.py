@@ -29,8 +29,8 @@ class MotorChain:
         material = \
             MaterialsDomain.Materials.get_material_by_id(self.material_id)
         try:
-            fy = material['yeld_Strength']/1.25
-            fu = material['ultimate_Strength']/1.5
+            fy = material['yeld_strength']/1.25
+            fu = material['ultimate_strength']/1.5
         except:
             print('Material not Found!')
         else:

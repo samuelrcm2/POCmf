@@ -10,5 +10,12 @@
     "python.testing.pytestEnabled": false,
     "python.testing.nosetestsEnabled": false,
     "python.testing.unittestEnabled": true,
-    "python.pythonPath": "C:\\Users\\samue\\python.exe"
+    "python.pythonPath": "C:\\Program Files (x86)\\Python38-32\\python.exe",
+    "files.associations": {
+        "*.tpp": "cpp"
+    },
+    "terminal.integrated.shell.windows": "cmd.exe",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }

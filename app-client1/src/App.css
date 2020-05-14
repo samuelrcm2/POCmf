@@ -1,0 +1,11 @@
+.Main {
+  background-color: darkblue;
+}
+
+.Main .MuiInputBase-root {
+  color: white;
+}
+
+.MuiInputBase-input {
+  color: white;
+}

@@ -4,8 +4,8 @@ class Materials:
     def __init__(self, Id, name, yeld_stregth, ultimate_strength, density):
         self.id: int = Id
         self.name: str = name
-        self.yeld_Strength: float = yeld_stregth
-        self.ultimate_Strength: float = ultimate_strength
+        self.yeld_strength: float = yeld_stregth
+        self.ultimate_strength: float = ultimate_strength
         self.density: float = density
         
     @classmethod  
