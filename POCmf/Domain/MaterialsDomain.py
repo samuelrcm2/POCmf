@@ -1,27 +1,27 @@
 from Infra import MaterialInfra
 
 class Materials:
-    def __init__(self, Id, name, yeld_stregth, ultimate_strength, density):
+    def __init__(self, Id, name, yeldStrength, ultimateStrength, density):
         self.id: int = Id
         self.name: str = name
-        self.yeld_strength: float = yeld_stregth
-        self.ultimate_strength: float = ultimate_strength
+        self.yeldStrength: float = yeldStrength
+        self.ultimateStrength: float = ultimateStrength
         self.density: float = density
         
     @classmethod  
-    def get_all_materials(cls):
+    def getAllMaterials(cls):
         materials: list = []
-        raw_materials = MaterialInfra.get_all_materials()
-        for row in raw_materials:
+        rawMaterials = MaterialInfra.getAllMaterials()
+        for row in rawMaterials:
             aux = cls(*row)
             materials.append(aux.__dict__)
         return materials
     
     @classmethod
-    def get_material_by_id(cls, Id):
-        raw_material = MaterialInfra.get_material_by_id(Id)
-        if raw_material:
-            aux = cls(*raw_material)
+    def getMaterialById(cls, Id):
+        rawMaterial = MaterialInfra.getMaterialById(Id)
+        if rawMaterial:
+            aux = cls(*rawMaterial)
             material = (aux.__dict__)
         else:
             material = None

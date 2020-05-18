@@ -1,6 +1,6 @@
 import sqlite3
 
-def get_all_materials():
+def getAllMaterials():
     connection = sqlite3.connect("Infra/POCmf_DB.db")
     cursor = connection.cursor()    
     
@@ -13,7 +13,7 @@ def get_all_materials():
     
     return materials
     
-def get_material_by_id(Id):
+def getMaterialById(Id):
     connection = sqlite3.connect("Infra/POCmf_DB.db")
     cursor = connection.cursor()    
     

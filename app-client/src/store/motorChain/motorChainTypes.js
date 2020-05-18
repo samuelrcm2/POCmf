@@ -1,20 +1,20 @@
-// Actions types
+// Classes
 export class motorChain {
   radius;
   height;
   thickness;
   volume;
-  work_pressure;
-  material_id;
-  admissive_stress;
-  longitudinal_stress;
+  workPressure;
+  materialId;
+  admissiveStress;
+  longitudinalStress;
 }
 
 export class Material {
   id;
   name;
-  yeld_strength;
-  ultimate_strength;
+  yeldStrength;
+  ultimateStrength;
   density;
 }
 
@@ -23,10 +23,11 @@ export class MotorChain {
   height;
   thickness;
   volume;
-  work_pressure;
-  material_id;
-  admissive_stress;
-  longitudinal_stress;
+  workPressure;
+  materialId;
+  admissiveStress;
+  longitudinalStress;
+  circumferentialStress;
 
   constructor(motorChain) {
     this.radius = motorChain
@@ -49,31 +50,61 @@ export class MotorChain {
         ? motorChain.volume
         : null
       : null;
-    this.work_pressure = motorChain
-      ? motorChain.work_pressure
-        ? motorChain.work_pressure
+    this.workPressure = motorChain
+      ? motorChain.workPressure
+        ? motorChain.workPressure
         : null
       : null;
-    this.material_id = motorChain
-      ? motorChain.material_id
-        ? motorChain.material_id
+    this.materialId = motorChain
+      ? motorChain.materialId
+        ? motorChain.materialId
         : ""
       : "";
-    this.admissive_stress = motorChain
-      ? motorChain.admissive_stress
-        ? motorChain.admissive_stress
+    this.admissiveStress = motorChain
+      ? motorChain.admissiveStress
+        ? motorChain.admissiveStress
         : null
       : null;
-    this.longitudinal_stress = motorChain
-      ? motorChain.longitudinal_stress
-        ? motorChain.longitudinal_stress
+    this.longitudinalStress = motorChain
+      ? motorChain.longitudinalStress
+        ? motorChain.longitudinalStress
+        : null
+      : null;
+    this.circumferentialStress = motorChain
+      ? motorChain.circumferentialStress
+        ? motorChain.circumferentialStress
         : null
       : null;
   }
 }
 
+// Constant
+
+export const MotorChainActionsType = {
+  MATERIALS_GETTED: "MATERIALS_GETTED",
+  MOTORCHAIN_PROPS_SETTED: "MOTORCHAIN_PROPS_SETTED",
+  CALCULASTION_TYPE_SETTED: "CALCULASTION_TYPE_SETTED",
+  RADIUS_SETTED: "RADIUS_SETTED",
+  HEIGHT_SETTED: "HEIGHT_SETTED",
+  THICKNESS_SETTED: "THICKNESS_SETTED",
+  VOLUME_SETTED: "VOLUME_SETTED",
+  WORK_PRESSURE_SETTED: "WORK_PRESSURE_SETTED",
+  MATERIAL_SETTED: "MATERIAL_SETTED",
+  ADMISSIVE_STRESS_SETTED: "ADMISSIVE_STRESS_SETTED",
+  LONGITUDINAL_STRESS_SETTED: "LONGITUDINAL_STRESS_SETTED",
+  CIRCUNFERENTIAL_STRESS_SETTED: "CIRCUNFERENTIAL_STRESS_SETTED",
+};
+
 export const CalculationTypes = {
-  SAFETY_MARGIN: 1,
-  THICKNESS: 2,
-  MAIN_STRESSES: 3,
+  SAFETY_MARGIN: 0,
+  THICKNESS: 1,
+  MAIN_STRESSES: 2,
+};
+
+export const nameTranslations = {
+  admissiveStress: "Admissive Stress",
+  longitudinalStress: "Longitudinal Stress",
+  circumferentialStress: "Circumferential Stress",
+  SM: "Safety Margin",
+  thickness: "Thicknesss",
 };

@@ -14,17 +14,12 @@ def home():
 class MotorChain(Resource):
     def post (self):
         data = request.get_json()
-        result = StructDomain.handle_MotorChain_calculation_types(data)
-        if data["type_calculation"] == 0:
-            return {"SM": result}, 200
-        elif data["type_calculation"] == 1:
-            return {"Thickness": result}, 200
-        elif data["type_calculation"] == 2:
-            return result, 200        
+        result = StructDomain.handleMotorChainCalculationTypes(data['motorChain'], data['calculationType'])
+        return result, 200        
     
 class AllMaterials(Resource):
     def get (self):
-        materials = MaterialsDomain.Materials.get_all_materials()
+        materials = MaterialsDomain.Materials.getAllMaterials()
         if materials:
             return materials, 200
         else:
@@ -32,7 +27,7 @@ class AllMaterials(Resource):
         
 class MaterialsById(Resource):
     def get (self, Id):
-        material = MaterialsDomain.Materials.get_material_by_id(Id)
+        material = MaterialsDomain.Materials.getMaterialById(Id)
         if material:
             return material, 200
         else: 

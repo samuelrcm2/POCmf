@@ -1,22 +1,23 @@
 import { MotorChain } from "./motorChainTypes";
+import { MotorChainActionsType } from "./motorChainTypes";
 
 const INITIAL_STATE = {
   motorChain: new MotorChain(),
   calculationType: "",
-  loading: false,
+  calculatedData: {},
   allMaterials: [],
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case "MATERIALS_GETTED":
+    case MotorChainActionsType.MATERIALS_GETTED:
       return { ...state, allMaterials: action.payload };
-    case "CALCULASTION_TYPE_SETTED":
+    case MotorChainActionsType.CALCULASTION_TYPE_SETTED:
       return {
         ...state,
         calculationType: action.payload,
       };
-    case "RADIUS_SETTED":
+    case MotorChainActionsType.RADIUS_SETTED:
       return {
         ...state,
         motorChain: {
@@ -24,7 +25,7 @@ const reducer = (state = INITIAL_STATE, action) => {
           radius: action.payload,
         },
       };
-    case "HEIGHT_SETTED":
+    case MotorChainActionsType.HEIGHT_SETTED:
       return {
         ...state,
         motorChain: {
@@ -32,7 +33,7 @@ const reducer = (state = INITIAL_STATE, action) => {
           height: action.payload,
         },
       };
-    case "THICKNESS_SETTED":
+    case MotorChainActionsType.THICKNESS_SETTED:
       return {
         ...state,
         motorChain: {
@@ -40,7 +41,7 @@ const reducer = (state = INITIAL_STATE, action) => {
           thickness: action.payload,
         },
       };
-    case "VOLUME_SETTED":
+    case MotorChainActionsType.VOLUME_SETTED:
       return {
         ...state,
         motorChain: {
@@ -48,37 +49,50 @@ const reducer = (state = INITIAL_STATE, action) => {
           volume: action.payload,
         },
       };
-    case "WORK_PRESSURE_SETTED":
+    case MotorChainActionsType.WORK_PRESSURE_SETTED:
       return {
         ...state,
         motorChain: {
           ...state.motorChain,
-          work_pressure: action.payload,
+          workPressure: action.payload,
         },
       };
-    case "MATERIAL_SETTED":
+    case MotorChainActionsType.MATERIAL_SETTED:
       return {
         ...state,
         motorChain: {
           ...state.motorChain,
-          material_id: action.payload,
+          materialId: action.payload,
         },
       };
-    case "ADMISSIVE_STRESS_SETTED":
+    case MotorChainActionsType.ADMISSIVE_STRESS_SETTED:
       return {
         ...state,
         motorChain: {
           ...state.motorChain,
-          admissive_stress: action.payload,
+          admissiveStress: action.payload,
         },
       };
-    case "LONGITUDINAL_STRESS_SETTED":
+    case MotorChainActionsType.LONGITUDINAL_STRESS_SETTED:
       return {
         ...state,
         motorChain: {
           ...state.motorChain,
-          longitudinal_stress: action.payload,
+          longitudinalStress: action.payload,
         },
+      };
+    case MotorChainActionsType.CIRCUNFERENTIAL_STRESS_SETTED:
+      return {
+        ...state,
+        motorChain: {
+          ...state.motorChain,
+          circumferentialStress: action.payload,
+        },
+      };
+    case MotorChainActionsType.MOTORCHAIN_PROPS_SETTED:
+      return {
+        ...state,
+        calculatedData: action.payload,
       };
     default:
       return { ...state };

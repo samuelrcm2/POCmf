@@ -1,11 +1,12 @@
 .Main {
-  background-color: darkblue;
+  /* background-color: black; */
+  color: white;
 }
-
+.Main .MuiTextField-root {
+  color: white;
+  border-color: white;
+}
 .Main .MuiInputBase-root {
   color: white;
-}
-
-.MuiInputBase-input {
-  color: white;
+  border-color: white;
 }

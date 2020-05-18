@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+//react
+import React, { useEffect, useState } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
+//CSS
 import clsx from "clsx";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -9,9 +11,17 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
+import Tooltip from "@material-ui/core/Tooltip";
+import Button from "@material-ui/core/Button";
+
+//Third Part Libraries
+import { isNilOrEmpty } from "ramda-adjunct";
 
 import * as motorChainActions from "../../store/motorChain/motorChainActions";
-import { CalculationTypes } from "../../store/motorChain/motorChainTypes";
+import {
+  CalculationTypes,
+  nameTranslations,
+} from "../../store/motorChain/motorChainTypes";
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
@@ -21,6 +31,12 @@ const useStyles = makeStyles((theme) =>
         color: "white",
         border: "white",
       },
+      "& .MuiFormLabel-root": {
+        fontSize: "10px",
+      },
+      "& .MuiInputBase-input": {
+        fontSize: "10px",
+      },
     },
     margin: {
       margin: theme.spacing(1),
@@ -29,7 +45,7 @@ const useStyles = makeStyles((theme) =>
       color: "black",
     },
     textField: {
-      width: 500,
+      width: 300,
     },
     selectEmpty: {
       marginTop: theme.spacing(2),
@@ -38,9 +54,16 @@ const useStyles = makeStyles((theme) =>
       margin: theme.spacing(1),
       minWidth: 120,
     },
+    select: {
+      fontSize: "10px",
+    },
     button: {
       display: "flex",
       justifyContent: "center",
+    },
+    result: {
+      display: "flex",
+      justifyContent: "flex-start",
     },
   })
 );
@@ -50,25 +73,100 @@ function MotorChainInfo(props) {
     props.getAllMaterials();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  let {
+  const {
     motorChain,
     materials,
     calculationType,
+    calculatedData,
     setCalculationType,
     setRadius,
     setHeight,
     setThickness,
-    setVolume,
     setWorkPressure,
     setMaterial,
     setAdmissiveStress,
     setLongitudinalStress,
+    setCircunferentialStress,
+    calculateMotorChainProps,
   } = props;
+  useEffect(() => {
+    checkIfHasData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [motorChain, calculationType]);
+
   const classes = useStyles();
+  const [messageError, setMessageError] = useState("");
+  const [buttonIsDisabled, setButtonState] = useState(true);
+  const checkIfHasData = () => {
+    if (isNilOrEmpty(calculationType)) {
+      setMessageError("Please, select a Calculation Type.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(motorChain.radius)) {
+      setMessageError("Please, fill the Radius field.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(motorChain.height)) {
+      setMessageError("Please, fill the Height field.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(motorChain.workPressure)) {
+      setMessageError("Please, fill the Work Pressure field.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(motorChain.materialId)) {
+      setMessageError("Please, select a Material.");
+      setButtonState(true);
+      return;
+    }
+
+    if (
+      calculationType !== CalculationTypes.THICKNESS &&
+      isNilOrEmpty(motorChain.thickness)
+    ) {
+      setMessageError("Please, fill the Thickness field.");
+      setButtonState(true);
+      return;
+    }
+
+    if (calculationType !== CalculationTypes.MAIN_STRESSES) {
+      if (
+        isNilOrEmpty(motorChain.admissiveStress) ||
+        isNilOrEmpty(motorChain.longitudinalStress) ||
+        isNilOrEmpty(motorChain.circumferentialStress)
+      ) {
+        setMessageError("Please, fill the Stresses field.");
+        setButtonState(true);
+        return;
+      }
+    }
+    setButtonState(false);
+    setMessageError("");
+  };
+  const displayCalculatedData = () => {
+    let responses = [];
+    for (let [Key, value] of Object.entries(calculatedData)) {
+      responses.push(
+        <p key={value}>
+          {nameTranslations[Key]}: {value}
+        </p>
+      );
+    }
+    return responses;
+  };
+
   return (
     <div>
       <div className={classes.root}>
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} size="small">
           <InputLabel id="calculation-type-select-label">
             Tipo de Cálculo
           </InputLabel>
@@ -100,7 +198,7 @@ function MotorChainInfo(props) {
           className={clsx(classes.textField, classes.margin)}
           id="motor-chain-radius"
           onChange={(ev) => setRadius(ev.target.value)}
-          label="Radius"
+          label="Radius (mm)"
           type="number"
           defaultValue={motorChain.radius}
           InputProps={{
@@ -112,9 +210,11 @@ function MotorChainInfo(props) {
           className={clsx(classes.textField, classes.margin)}
           id="motor-chain-height"
           onChange={(ev) => setHeight(ev.target.value)}
-          label="Height"
+          label="Height (mm)"
           type="number"
           defaultValue={motorChain.height}
+          margin="normal"
+          fullWidth
           InputProps={{
             className: classes.input,
           }}
@@ -125,7 +225,7 @@ function MotorChainInfo(props) {
             className={clsx(classes.textField, classes.margin)}
             id="motor-chain-thickness"
             onChange={(ev) => setThickness(ev.target.value)}
-            label="Thickness"
+            label="Thickness (mm)"
             type="number"
             defaultValue={motorChain.thickness}
             InputProps={{
@@ -136,34 +236,22 @@ function MotorChainInfo(props) {
 
         <TextField
           className={clsx(classes.textField, classes.margin)}
-          id="motor-chain-volume"
-          onChange={(ev) => setVolume(ev.target.value)}
-          label="Volume"
-          type="number"
-          defaultValue={motorChain.volume}
-          InputProps={{
-            className: classes.input,
-          }}
-        />
-
-        <TextField
-          className={clsx(classes.textField, classes.margin)}
           id="motor-chain-work-pressure"
           onChange={(ev) => setWorkPressure(ev.target.value)}
-          label="Work Pressure"
+          label="Work Pressure (MPa)"
           type="number"
-          defaultValue={motorChain.work_pressure}
+          defaultValue={motorChain.workPressure}
           InputProps={{
             className: classes.input,
           }}
         />
 
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} size="small">
           <InputLabel id="demo-simple-select-label">Material</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={motorChain.material_id}
+            value={motorChain.materialId}
             onChange={(ev) => setMaterial(ev.target.value)}
           >
             <MenuItem key={"nullMaterialValue"} value={""}>
@@ -178,14 +266,14 @@ function MotorChainInfo(props) {
         </FormControl>
 
         {calculationType !== CalculationTypes.MAIN_STRESSES && (
-          <div>
+          <>
             <TextField
               className={clsx(classes.textField, classes.margin)}
               id="motor-chain-admissive-stress"
               onChange={(ev) => setAdmissiveStress(ev.target.value)}
-              label="Admissive Stress"
+              label="Admissive Stress (MPa)"
               type="number"
-              defaultValue={motorChain.admissive_stress}
+              defaultValue={motorChain.admissiveStress}
               InputProps={{
                 className: classes.input,
               }}
@@ -195,19 +283,46 @@ function MotorChainInfo(props) {
               className={clsx(classes.textField, classes.margin)}
               id="motor-chain-longitudinal-stress"
               onChange={(ev) => setLongitudinalStress(ev.target.value)}
-              label="Longitudinal Stress"
+              label="Longitudinal Stress (MPa)"
               type="number"
-              defaultValue={motorChain.longitudinal_stress}
+              defaultValue={motorChain.longitudinalStress}
               InputProps={{
                 className: classes.input,
               }}
             />
-          </div>
+
+            <TextField
+              className={clsx(classes.textField, classes.margin)}
+              id="motor-chain-circunferential-stress"
+              onChange={(ev) => setCircunferentialStress(ev.target.value)}
+              label="Circunferential Stress (MPa)"
+              type="number"
+              defaultValue={motorChain.circumferentialStress}
+              InputProps={{
+                className: classes.input,
+              }}
+            />
+          </>
         )}
       </div>
       <div className={classes.button}>
-        <button onClick={() => console.log("CLIQUEI")}>COMO VAI O TCC?</button>
+        <Tooltip title={messageError} placeholder="bottom">
+          <span>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={buttonIsDisabled}
+              onClick={() =>
+                calculateMotorChainProps(motorChain, calculationType)
+              }
+            >
+              COMO VAI O TCC?
+            </Button>
+          </span>
+        </Tooltip>
       </div>
+
+      <div className={classes.result}>{displayCalculatedData()}</div>
     </div>
   );
 }
@@ -215,6 +330,7 @@ const mapStateToProps = (state) => ({
   motorChain: state.motorChain.motorChain,
   materials: state.motorChain.allMaterials,
   calculationType: state.motorChain.calculationType,
+  calculatedData: state.motorChain.calculatedData,
 });
 
 const mapDispatchToProps = (dispatch) => {

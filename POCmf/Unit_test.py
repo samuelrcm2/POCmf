@@ -8,48 +8,48 @@ objectTest: object = {
     "thickness": 1, # mm
     "yield_stress": 40, # MPa
     "max_stress": 80, # MPa
-    "work_pressure": 4, # MPa
+    "workPressure": 4, # MPa
     "SM": 1.15,
-    "material_id": 1,
-    "circumferential_stress": 12, #MPa
-    "longitudinal_stress": 6, ##MPa
+    "materialId": 1,
+    "circumferentialStress": 12, #MPa
+    "longitudinalStress": 6, ##MPa
     "type_calculation": 0, # 0 - Calculate SM, 1 - Thickness, 2- circunferencial and logitudinal stresses
 }
 
 motorChainTest = StructDomain.MotorChain(objectTest)
 
 class testStructDoamin(unittest.TestCase):    
-    def test_calculate_admissive_stress(self):
+    def test_calculateAdmissiveStress(self):
         motorChainTest = StructDomain.MotorChain(objectTest)
-        motorChainTest.calculate_admissive_stress()
-        self.assertEqual(motorChainTest.admissive_stress, 24.8)
+        motorChainTest.calculateAdmissiveStress()
+        self.assertEqual(motorChainTest.admissiveStress, 24.8)
         
-    def test_calculate_admissive_stress_String(self):
-        objectTest["material_id"] = 900
+    def test_calculateAdmissiveStress_String(self):
+        objectTest["materialId"] = 900
         motorChainTest = StructDomain.MotorChain(objectTest)
-        motorChainTest.calculate_admissive_stress()
-        self.assertEqual(motorChainTest.admissive_stress, None)
+        motorChainTest.calculateAdmissiveStress()
+        self.assertEqual(motorChainTest.admissiveStress, None)
 
-    def test_calculate_circumferential_stress(self):
+    def test_calculateCircumferentialStress(self):
         motorChainTest = StructDomain.MotorChain(objectTest)
-        motorChainTest.calculate_circumferential_stress()
-        self.assertEqual(motorChainTest.circumferential_stress, 20)
+        motorChainTest.calculateCircumferentialStress()
+        self.assertEqual(motorChainTest.circumferentialStress, 20)
         
-    def test_calculate_longitudinal_stress(self):
+    def test_calculateLongitudinalStress(self):
         motorChainTest = StructDomain.MotorChain(objectTest)
-        motorChainTest.calculate_longitudinal_stress()
-        self.assertEqual(motorChainTest.longitudinal_stress, 10)
+        motorChainTest.calculateLongitudinalStress()
+        self.assertEqual(motorChainTest.longitudinalStress, 10)
         
-    def test_calculate_thickness(self):
+    def test_calculateThickness(self):
         objectTest['thickness'] = None
         motorChainTest = StructDomain.MotorChain(objectTest)
-        motorChainTest.calculate_thickness()
+        motorChainTest.calculateThickness()
         self.assertAlmostEqual(motorChainTest.thicness, 1.66667, 3)
         
-    def test_calculate_SM(self):
+    def test_calculateSM(self):
         motorChainTest = StructDomain.MotorChain(objectTest)
-        motorChainTest.calculate_admissive_stress()
-        motorChainTest.calculate_SM()
+        motorChainTest.calculateAdmissiveStress()
+        motorChainTest.calculateSM()
         self.assertAlmostEqual(motorChainTest.SM, 2.06667, 2)
         
 if  __name__== '__main__':

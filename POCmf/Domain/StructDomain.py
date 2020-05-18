@@ -7,114 +7,97 @@ class MotorChain:
         self.height: float = motorChain['height']
         self.thicness: float = motorChain['thickness']
         self.volume: float = self.height * math.pi  * (self.radius ** 2)
-        self.work_pressure: float = motorChain['work_pressure']
-        self.material_id: int = motorChain['material_id']
-        self.admissive_stress: float = None
+        self.workPressure: float = motorChain['workPressure']
+        self.materialId: int = motorChain['materialId']
+        self.admissiveStress: float = None
         self.SM: float = None
-        self.circumferential_stress: float = motorChain['circumferential_stress']
-        self.longitudinal_stress: float = motorChain['longitudinal_stress']
+        self.circumferentialStress: float = motorChain['circumferentialStress']
+        self.longitudinalStress: float = motorChain['longitudinalStress']
         
     def __str__(self):
         return f"Motor chain properties: \n \
             Height: {self.height} mm \n \
             Radius: {self.radius} mm \n \
             Thickness: {self.thicness} mm \n \
-            Work Pressure: {self.work_pressure} MPa \n \
-            Admissive Stress: {self.admissive_stress} MPa \n \
-            Circunferencial Stress: {self.circumferential_stress} MPa \n \
-            Longitudinal Stress: {self.longitudinal_stress} MPa \
+            Work Pressure: {self.workPressure} MPa \n \
+            Admissive Stress: {self.admissiveStress} MPa \n \
+            Circunferencial Stress: {self.circumferentialStress} MPa \n \
+            Longitudinal Stress: {self.longitudinalStress} MPa \
             "
         
-    def calculate_admissive_stress (self):
+    def calculateAdmissiveStress (self):
         material = \
-            MaterialsDomain.Materials.get_material_by_id(self.material_id)
+            MaterialsDomain.Materials.getMaterialById(self.materialId)
         try:
-            fy = material['yeld_strength']/1.25
-            fu = material['ultimate_strength']/1.5
+            fy = material['yeldStrength']/1.25
+            fu = material['ultimateStrength']/1.5
         except:
             print('Material not Found!')
         else:
-            self.admissive_stress = fy if fy < fu else fu
+            self.admissiveStress = fy if fy < fu else fu
         
-    def calculate_circumferential_stress (self):
+    def calculateCircumferentialStress (self):
         #Considering 100% weld eficiency 
         #Considering external and internal radius
-        self.circumferential_stress  = \
-            (self.work_pressure * self.radius) / self.thicness
+        self.circumferentialStress  = \
+            (self.workPressure * self.radius) / self.thicness
         
-    def calculate_longitudinal_stress (self):
+    def calculateLongitudinalStress (self):
         #TODO -- Considering external and internal radius
         # circumferential_area: float = \
         #      ((self.radius + self.thicness) ** 2 - self.radius ** 2)
         # circumferential_chain_area: float = (self.radius ** 2)
-        self.longitudinal_stress = \
-            (self.work_pressure * self.radius) / (2 * self.thicness)
+        self.longitudinalStress = \
+            (self.workPressure * self.radius) / (2 * self.thicness)
             
-    def calculate_thickness (self):
-        thickness_by_circumferential_stress = \
-            (self.work_pressure * self.radius) / self.circumferential_stress
-        thickness_by_longitudinal_stress = \
-            (self.work_pressure * self.radius) / (2 * self.longitudinal_stress)
-        self.thicness = thickness_by_circumferential_stress if \
-            thickness_by_circumferential_stress < thickness_by_longitudinal_stress \
-            else thickness_by_longitudinal_stress
+    def calculateThickness (self):
+        thicknessByCircumferentialStress = \
+            (self.workPressure * self.radius) / self.circumferentialStress
+        thicknessByLongitudinalStress = \
+            (self.workPressure * self.radius) / (2 * self.longitudinalStress)
+        self.thicness = thicknessByCircumferentialStress if \
+            thicknessByCircumferentialStress < thicknessByLongitudinalStress \
+            else thicknessByLongitudinalStress
             
-    def calculate_SM (self):
-        max_stress = self.circumferential_stress if self.circumferential_stress > \
-            self.longitudinal_stress else self.longitudinal_stress
-        self.SM = self.admissive_stress / max_stress
+    def calculateSM (self):
+        maxStress = self.circumferentialStress if self.circumferentialStress > \
+            self.longitudinalStress else self.longitudinalStress
+        self.SM = self.admissiveStress / maxStress
         
     @classmethod
-    def motorChain_SM_calculation(cls, motor_chain):
-        motor_chain['SM'] = None
-        new_motor_chain = cls(motor_chain)
-        new_motor_chain.calculate_admissive_stress()
-        new_motor_chain.calculate_SM()
-        return new_motor_chain
+    def motorChainSMCalculation(cls, motorChain):
+        motorChain['SM'] = None
+        newMotorChain = cls(motorChain)
+        newMotorChain.calculateAdmissiveStress()
+        newMotorChain.calculateSM()
+        return newMotorChain
     
     @classmethod
-    def motorChain_thickness_calculation(cls, motor_chain):
-        motor_chain['thickness'] = None
-        new_motor_chain = cls(motor_chain)
-        new_motor_chain.calculate_thickness()
-        return new_motor_chain
+    def motorChainThicknessCalculation(cls, motorChain):
+        motorChain['thickness'] = None
+        newMotorChain = cls(motorChain)
+        newMotorChain.calculateThickness()
+        return newMotorChain
     
     @classmethod
-    def motorChain_stresses_calculation(cls, motor_chain):
-        motor_chain['circumferential_stress'] = None
-        motor_chain['longitudinal_stress'] = None
-        new_motor_chain = cls(motor_chain)
-        new_motor_chain.calculate_circumferential_stress()
-        new_motor_chain.calculate_longitudinal_stress()
-        return new_motor_chain
+    def motorChainStressesCalculation(cls, motorChain):
+        motorChain['circumferentialStress'] = None
+        motorChain['longitudinalStress'] = None
+        newMotorChain = cls(motorChain)
+        newMotorChain.calculateCircumferentialStress()
+        newMotorChain.calculateLongitudinalStress()
+        return newMotorChain
     
-def handle_MotorChain_calculation_types (motor_chain):
-    if motor_chain['type_calculation'] == 0:
-        new_motor_chain = MotorChain.motorChain_SM_calculation(motor_chain)
-        return new_motor_chain.SM
-    elif motor_chain['type_calculation'] == 1:
-        new_motor_chain = MotorChain.motorChain_thickness_calculation(motor_chain)
-        return new_motor_chain.thicness
+def handleMotorChainCalculationTypes (motorChain, calculationType):
+    if calculationType == 0:
+        newMotorChain = MotorChain.motorChainSMCalculation(motorChain)
+        return {"SM": newMotorChain.SM}
+    elif calculationType == 1:
+        newMotorChain = MotorChain.motorChainThicknessCalculation(motorChain)
+        return { "thickness": newMotorChain.thicness}
     else :
-        new_motor_chain = MotorChain.motorChain_stresses_calculation(motor_chain)
+        newMotorChain = MotorChain.motorChainStressesCalculation(motorChain)
         return {
-                "circumferential_stress" : new_motor_chain.circumferential_stress,
-                "longitudinal_stress" : new_motor_chain.longitudinal_stress,
+                "circumferentialStress" : newMotorChain.circumferentialStress,
+                "longitudinalStress" : newMotorChain.longitudinalStress,
                 }    
-    
-objectTest: object = {
-    "radius": 5, # mm
-    "height": 40, # mm
-    "thickness": 1, # mm
-    "yield_stress": 40, # MPa
-    "max_stress": 80, # MPa
-    "work_pressure": 4, # MPa
-    "SM": 1.15,
-    "material_id": 1,
-    "circumferential_stress": 12, #MPa
-    "longitudinal_stress": 6, ##MPa
-    "type_calculation": 0, # 0 - Calculate SM, 1 - Thickness, 2- circunferencial and logitudinal stresses
-}
-
-# test = MotorChain(objectTest)
-# print(test.calculate_admissive_stress())
