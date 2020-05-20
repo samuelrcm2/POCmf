@@ -48,7 +48,7 @@ export const setCalculationType = (value) => {
 
 export const setRadius = (value) => {
   return {
-    type: MotorChainActionsType.RADIUS_SETTED,
+    type: MotorChainActionsType.INTERNAL_RADIUS_SETTED,
     payload: Number(value),
   };
 };
@@ -105,6 +105,13 @@ export const setLongitudinalStress = (value) => {
 export const setCircunferentialStress = (value) => {
   return {
     type: MotorChainActionsType.CIRCUNFERENTIAL_STRESS_SETTED,
+    payload: Number(value),
+  };
+};
+
+export const setRadialStress = (value) => {
+  return {
+    type: MotorChainActionsType.RADIAL_STRESS_SETTED,
     payload: Number(value),
   };
 };

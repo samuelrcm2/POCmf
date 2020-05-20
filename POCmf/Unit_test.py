@@ -3,7 +3,7 @@ from Domain import StructDomain
 from Infra import MaterialInfra
 
 objectTest: object = {
-    "radius": 5, # mm
+    "internalRadius": 5, # mm
     "height": 40, # mm
     "thickness": 1, # mm
     "yield_stress": 40, # MPa
@@ -44,7 +44,7 @@ class testStructDoamin(unittest.TestCase):
         objectTest['thickness'] = None
         motorChainTest = StructDomain.MotorChain(objectTest)
         motorChainTest.calculateThickness()
-        self.assertAlmostEqual(motorChainTest.thicness, 1.66667, 3)
+        self.assertAlmostEqual(motorChainTest.thickness, 1.66667, 3)
         
     def test_calculateSM(self):
         motorChainTest = StructDomain.MotorChain(objectTest)

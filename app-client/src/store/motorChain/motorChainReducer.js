@@ -17,12 +17,12 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         calculationType: action.payload,
       };
-    case MotorChainActionsType.RADIUS_SETTED:
+    case MotorChainActionsType.INTERNAL_RADIUS_SETTED:
       return {
         ...state,
         motorChain: {
           ...state.motorChain,
-          radius: action.payload,
+          internalRadius: action.payload,
         },
       };
     case MotorChainActionsType.HEIGHT_SETTED:
@@ -93,6 +93,11 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         calculatedData: action.payload,
+      };
+    case MotorChainActionsType.RADIAL_STRESS_SETTED:
+      return {
+        ...state,
+        radialStress: action.payload,
       };
     default:
       return { ...state };

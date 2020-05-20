@@ -3,22 +3,23 @@ import math
 
 class MotorChain:
     def __init__ (self, motorChain):
-        self.radius: float = motorChain['radius']
+        self.internalRadius: float = motorChain['internalRadius']
         self.height: float = motorChain['height']
-        self.thicness: float = motorChain['thickness']
-        self.volume: float = self.height * math.pi  * (self.radius ** 2)
+        self.thickness: float = motorChain['thickness']
+        self.volume: float = self.height * math.pi  * (self.internalRadius ** 2)
         self.workPressure: float = motorChain['workPressure']
         self.materialId: int = motorChain['materialId']
         self.admissiveStress: float = None
         self.SM: float = None
-        self.circumferentialStress: float = motorChain['circumferentialStress']
+        self.circumferentialStress: float = motorChain['circumferentialStress'] #Same as tangential
         self.longitudinalStress: float = motorChain['longitudinalStress']
-        
+        self.radialStress: float = motorChain['radialStress']
+
     def __str__(self):
         return f"Motor chain properties: \n \
             Height: {self.height} mm \n \
-            Radius: {self.radius} mm \n \
-            Thickness: {self.thicness} mm \n \
+            Radius: {self.internalRadius} mm \n \
+            Thickness: {self.thickness} mm \n \
             Work Pressure: {self.workPressure} MPa \n \
             Admissive Stress: {self.admissiveStress} MPa \n \
             Circunferencial Stress: {self.circumferentialStress} MPa \n \
@@ -38,24 +39,33 @@ class MotorChain:
         
     def calculateCircumferentialStress (self):
         #Considering 100% weld eficiency 
-        #Considering external and internal radius
+        #Considering external and internal internalRadius
         self.circumferentialStress  = \
-            (self.workPressure * self.radius) / self.thicness
+            (self.workPressure * self.internalRadius) / self.thickness
         
     def calculateLongitudinalStress (self):
-        #TODO -- Considering external and internal radius
+        #TODO -- Considering external and internal internalRadius
         # circumferential_area: float = \
-        #      ((self.radius + self.thicness) ** 2 - self.radius ** 2)
-        # circumferential_chain_area: float = (self.radius ** 2)
+        #      ((self.internalRadius + self.thickness) ** 2 - self.internalRadius ** 2)
+        # circumferential_chain_area: float = (self.internalRadius ** 2)
         self.longitudinalStress = \
-            (self.workPressure * self.radius) / (2 * self.thicness)
-            
+            (self.workPressure * self.internalRadius) / (2 * self.thickness)
+
+    def calculateMaxRadialStress (self):
+        if self.thickness / self.internalRadius < 0.1: # It can considerate thin wall vessel
+            self.radialStress = None
+            return
+
+        externalRadius = self.internalRadius + self.thickness
+        self.radialStress = self.workPressure * ((self.internalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) \
+            * (1 - (externalRadius ** 2)/(self.internalRadius ** 2))
+
     def calculateThickness (self):
         thicknessByCircumferentialStress = \
-            (self.workPressure * self.radius) / self.circumferentialStress
+            (self.workPressure * self.internalRadius) / self.circumferentialStress
         thicknessByLongitudinalStress = \
-            (self.workPressure * self.radius) / (2 * self.longitudinalStress)
-        self.thicness = thicknessByCircumferentialStress if \
+            (self.workPressure * self.internalRadius) / (2 * self.longitudinalStress)
+        self.thickness = thicknessByCircumferentialStress if \
             thicknessByCircumferentialStress < thicknessByLongitudinalStress \
             else thicknessByLongitudinalStress
             
@@ -83,9 +93,11 @@ class MotorChain:
     def motorChainStressesCalculation(cls, motorChain):
         motorChain['circumferentialStress'] = None
         motorChain['longitudinalStress'] = None
+        motorChain['radialStress'] = None
         newMotorChain = cls(motorChain)
         newMotorChain.calculateCircumferentialStress()
         newMotorChain.calculateLongitudinalStress()
+        newMotorChain.calculateMaxRadialStress()
         return newMotorChain
     
 def handleMotorChainCalculationTypes (motorChain, calculationType):
@@ -94,10 +106,11 @@ def handleMotorChainCalculationTypes (motorChain, calculationType):
         return {"SM": newMotorChain.SM}
     elif calculationType == 1:
         newMotorChain = MotorChain.motorChainThicknessCalculation(motorChain)
-        return { "thickness": newMotorChain.thicness}
+        return { "thickness": newMotorChain.thickness}
     else :
         newMotorChain = MotorChain.motorChainStressesCalculation(motorChain)
         return {
                 "circumferentialStress" : newMotorChain.circumferentialStress,
                 "longitudinalStress" : newMotorChain.longitudinalStress,
+                "radialStress" : newMotorChain.radialStress if newMotorChain.radialStress else None
                 }    

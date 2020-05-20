@@ -1,15 +1,4 @@
 // Classes
-export class motorChain {
-  radius;
-  height;
-  thickness;
-  volume;
-  workPressure;
-  materialId;
-  admissiveStress;
-  longitudinalStress;
-}
-
 export class Material {
   id;
   name;
@@ -19,7 +8,7 @@ export class Material {
 }
 
 export class MotorChain {
-  radius;
+  internalRadius;
   height;
   thickness;
   volume;
@@ -28,11 +17,11 @@ export class MotorChain {
   admissiveStress;
   longitudinalStress;
   circumferentialStress;
-
+  radialStress;
   constructor(motorChain) {
-    this.radius = motorChain
-      ? motorChain.radius
-        ? motorChain.radius
+    this.internalRadius = motorChain
+      ? motorChain.internalRadius
+        ? motorChain.internalRadius
         : null
       : null;
     this.height = motorChain
@@ -75,6 +64,11 @@ export class MotorChain {
         ? motorChain.circumferentialStress
         : null
       : null;
+    this.radialStress = motorChain
+      ? motorChain.radialStress
+        ? motorChain.radialStress
+        : null
+      : null;
   }
 }
 
@@ -84,7 +78,7 @@ export const MotorChainActionsType = {
   MATERIALS_GETTED: "MATERIALS_GETTED",
   MOTORCHAIN_PROPS_SETTED: "MOTORCHAIN_PROPS_SETTED",
   CALCULASTION_TYPE_SETTED: "CALCULASTION_TYPE_SETTED",
-  RADIUS_SETTED: "RADIUS_SETTED",
+  INTERNAL_RADIUS_SETTED: "INTERNAL_RADIUS_SETTED",
   HEIGHT_SETTED: "HEIGHT_SETTED",
   THICKNESS_SETTED: "THICKNESS_SETTED",
   VOLUME_SETTED: "VOLUME_SETTED",
@@ -93,6 +87,7 @@ export const MotorChainActionsType = {
   ADMISSIVE_STRESS_SETTED: "ADMISSIVE_STRESS_SETTED",
   LONGITUDINAL_STRESS_SETTED: "LONGITUDINAL_STRESS_SETTED",
   CIRCUNFERENTIAL_STRESS_SETTED: "CIRCUNFERENTIAL_STRESS_SETTED",
+  RADIAL_STRESS_SETTED: "RADIAL_STRESS_SETTED",
 };
 
 export const CalculationTypes = {
@@ -105,6 +100,7 @@ export const nameTranslations = {
   admissiveStress: "Admissive Stress",
   longitudinalStress: "Longitudinal Stress",
   circumferentialStress: "Circumferential Stress",
+  radialStress: "Radial Stress",
   SM: "Safety Margin",
   thickness: "Thicknesss",
 };

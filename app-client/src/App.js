@@ -3,10 +3,13 @@ import { Provider } from "react-redux";
 
 import SideBar from "./components/SideBar/SideBar";
 import MotorChainComponent from "./components/MotorChain/MotorChain";
+import MotorView from "./components/MotorView/MotorView";
 import { MotorChain } from "./store/motorChain/motorChainTypes";
 import store from "./store/store";
 import Loader from "./components/Generic/Loader";
 import "./App.css";
+
+import Grid from "@material-ui/core/Grid";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import lime from "@material-ui/core/colors/lime";
 import green from "@material-ui/core/colors/green";
@@ -23,7 +26,14 @@ const App = () => (
       <Loader>
         <div className="Main">
           <SideBar />
-          <MotorChainComponent motorChain={new MotorChain()} />
+          <Grid container spacing={1}>
+            <Grid item xs={6}>
+              <MotorView />
+            </Grid>
+            <Grid item xs={6}>
+              <MotorChainComponent motorChain={new MotorChain()} />
+            </Grid>
+          </Grid>
         </div>
       </Loader>
     </ThemeProvider>

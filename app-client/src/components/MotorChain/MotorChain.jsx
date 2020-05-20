@@ -13,6 +13,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
 
 //Third Part Libraries
 import { isNilOrEmpty } from "ramda-adjunct";
@@ -25,6 +26,7 @@ import {
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
+      paddingRight: "8px",
       "& .MuiTextField-root": {
         margin: theme.spacing(1),
         width: 150,
@@ -60,10 +62,15 @@ const useStyles = makeStyles((theme) =>
     button: {
       display: "flex",
       justifyContent: "center",
+      paddingTop: "10px",
     },
     result: {
+      color: "Black",
       display: "flex",
       justifyContent: "flex-start",
+    },
+    resultPaper: {
+      marginRight: "5px",
     },
   })
 );
@@ -87,6 +94,7 @@ function MotorChainInfo(props) {
     setAdmissiveStress,
     setLongitudinalStress,
     setCircunferentialStress,
+    setRadialStress,
     calculateMotorChainProps,
   } = props;
   useEffect(() => {
@@ -104,8 +112,8 @@ function MotorChainInfo(props) {
       return;
     }
 
-    if (isNilOrEmpty(motorChain.radius)) {
-      setMessageError("Please, fill the Radius field.");
+    if (isNilOrEmpty(motorChain.internalRadius)) {
+      setMessageError("Please, fill the External Radius field.");
       setButtonState(true);
       return;
     }
@@ -147,7 +155,16 @@ function MotorChainInfo(props) {
         setButtonState(true);
         return;
       }
+      if (
+        checkIfMotorNeedRadiusStressField() &&
+        isNilOrEmpty(motorChain.radialStress)
+      ) {
+        setMessageError("Please, fill the Radial Stress field.");
+        setButtonState(true);
+        return;
+      }
     }
+
     setButtonState(false);
     setMessageError("");
   };
@@ -155,155 +172,188 @@ function MotorChainInfo(props) {
     let responses = [];
     for (let [Key, value] of Object.entries(calculatedData)) {
       responses.push(
-        <p key={value}>
-          {nameTranslations[Key]}: {value}
-        </p>
+        <li key={value}>{`${nameTranslations[Key]}: ${value} \n`}</li>
       );
     }
-    return responses;
+    return isNilOrEmpty(responses) ? null : (
+      <Paper className={classes.resultPaper}>
+        <ul>{responses}</ul>
+      </Paper>
+    );
   };
 
+  const checkIfMotorNeedRadiusStressField = () => {
+    if (
+      isNilOrEmpty(motorChain.thickness) ||
+      isNilOrEmpty(motorChain.internalRadius)
+    )
+      return false;
+    if (motorChain.thickness === 0 || motorChain.internalRadius === 0)
+      return false;
+
+    return motorChain.thickness / motorChain.internalRadius > 0.1;
+  };
   return (
     <div>
       <div className={classes.root}>
-        <FormControl className={classes.formControl} size="small">
-          <InputLabel id="calculation-type-select-label">
-            Tipo de Cálculo
-          </InputLabel>
-          <Select
-            labelId="calculation-type-select-label"
-            id="calculation-type-select"
-            value={calculationType}
-            onChange={(ev) => setCalculationType(ev.target.value)}
-          >
-            <MenuItem key={"nullCalculationTypeValue"} value={""}>
-              {""}
-            </MenuItem>
-            <MenuItem key={"SM-1"} value={CalculationTypes.SAFETY_MARGIN}>
-              Security Margin
-            </MenuItem>
-            <MenuItem key={"Thickness-2"} value={CalculationTypes.THICKNESS}>
-              Thickness
-            </MenuItem>
-            <MenuItem
-              key={"Main-Stresses"}
-              value={CalculationTypes.MAIN_STRESSES}
+        <Paper>
+          <FormControl className={classes.formControl} size="small">
+            <InputLabel id="calculation-type-select-label">
+              Tipo de Cálculo
+            </InputLabel>
+            <Select
+              labelId="calculation-type-select-label"
+              id="calculation-type-select"
+              value={calculationType}
+              onChange={(ev) => setCalculationType(ev.target.value)}
             >
-              Main Stresses
-            </MenuItem>
-          </Select>
-        </FormControl>
+              <MenuItem key={"nullCalculationTypeValue"} value={""}>
+                {""}
+              </MenuItem>
+              <MenuItem key={"SM-1"} value={CalculationTypes.SAFETY_MARGIN}>
+                Security Margin
+              </MenuItem>
+              <MenuItem key={"Thickness-2"} value={CalculationTypes.THICKNESS}>
+                Thickness
+              </MenuItem>
+              <MenuItem
+                key={"Main-Stresses"}
+                value={CalculationTypes.MAIN_STRESSES}
+              >
+                Main Stresses
+              </MenuItem>
+            </Select>
+          </FormControl>
 
-        <TextField
-          className={clsx(classes.textField, classes.margin)}
-          id="motor-chain-radius"
-          onChange={(ev) => setRadius(ev.target.value)}
-          label="Radius (mm)"
-          type="number"
-          defaultValue={motorChain.radius}
-          InputProps={{
-            className: classes.input,
-          }}
-        />
-
-        <TextField
-          className={clsx(classes.textField, classes.margin)}
-          id="motor-chain-height"
-          onChange={(ev) => setHeight(ev.target.value)}
-          label="Height (mm)"
-          type="number"
-          defaultValue={motorChain.height}
-          margin="normal"
-          fullWidth
-          InputProps={{
-            className: classes.input,
-          }}
-        />
-
-        {calculationType !== CalculationTypes.THICKNESS ? (
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="motor-chain-thickness"
-            onChange={(ev) => setThickness(ev.target.value)}
-            label="Thickness (mm)"
+            id="motor-chain-radius"
+            onChange={(ev) => setRadius(ev.target.value)}
+            label="Internal Radius (mm)"
             type="number"
-            defaultValue={motorChain.thickness}
+            defaultValue={motorChain.internalRadius}
             InputProps={{
               className: classes.input,
             }}
           />
-        ) : null}
 
-        <TextField
-          className={clsx(classes.textField, classes.margin)}
-          id="motor-chain-work-pressure"
-          onChange={(ev) => setWorkPressure(ev.target.value)}
-          label="Work Pressure (MPa)"
-          type="number"
-          defaultValue={motorChain.workPressure}
-          InputProps={{
-            className: classes.input,
-          }}
-        />
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
+            id="motor-chain-height"
+            onChange={(ev) => setHeight(ev.target.value)}
+            label="Height (mm)"
+            type="number"
+            defaultValue={motorChain.height}
+            margin="normal"
+            fullWidth
+            InputProps={{
+              className: classes.input,
+            }}
+          />
 
-        <FormControl className={classes.formControl} size="small">
-          <InputLabel id="demo-simple-select-label">Material</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={motorChain.materialId}
-            onChange={(ev) => setMaterial(ev.target.value)}
-          >
-            <MenuItem key={"nullMaterialValue"} value={""}>
-              {""}
-            </MenuItem>
-            {materials.map((material) => (
-              <MenuItem key={material.id} value={material.id}>
-                {material.name}
+          {calculationType !== CalculationTypes.THICKNESS ? (
+            <TextField
+              className={clsx(classes.textField, classes.margin)}
+              id="motor-chain-thickness"
+              onChange={(ev) => setThickness(ev.target.value)}
+              label="Thickness (mm)"
+              type="number"
+              defaultValue={motorChain.thickness}
+              InputProps={{
+                className: classes.input,
+              }}
+            />
+          ) : null}
+
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
+            id="motor-chain-work-pressure"
+            onChange={(ev) => setWorkPressure(ev.target.value)}
+            label="Work Pressure (MPa)"
+            type="number"
+            defaultValue={motorChain.workPressure}
+            InputProps={{
+              className: classes.input,
+            }}
+          />
+
+          <FormControl className={classes.formControl} size="small">
+            <InputLabel id="demo-simple-select-label">Material</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={motorChain.materialId}
+              onChange={(ev) => setMaterial(ev.target.value)}
+            >
+              <MenuItem key={"nullMaterialValue"} value={""}>
+                {""}
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+              {materials.map((material) => (
+                <MenuItem key={material.id} value={material.id}>
+                  {material.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        {calculationType !== CalculationTypes.MAIN_STRESSES && (
-          <>
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="motor-chain-admissive-stress"
-              onChange={(ev) => setAdmissiveStress(ev.target.value)}
-              label="Admissive Stress (MPa)"
-              type="number"
-              defaultValue={motorChain.admissiveStress}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
+          {calculationType !== CalculationTypes.MAIN_STRESSES && (
+            <>
+              <TextField
+                className={clsx(classes.textField, classes.margin)}
+                id="motor-chain-admissive-stress"
+                onChange={(ev) => setAdmissiveStress(ev.target.value)}
+                label="Admissive Stress (MPa)"
+                type="number"
+                defaultValue={motorChain.admissiveStress}
+                InputProps={{
+                  className: classes.input,
+                }}
+              />
 
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="motor-chain-longitudinal-stress"
-              onChange={(ev) => setLongitudinalStress(ev.target.value)}
-              label="Longitudinal Stress (MPa)"
-              type="number"
-              defaultValue={motorChain.longitudinalStress}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
+              <TextField
+                className={clsx(classes.textField, classes.margin)}
+                id="motor-chain-longitudinal-stress"
+                onChange={(ev) => setLongitudinalStress(ev.target.value)}
+                label="Longitudinal Stress (MPa)"
+                type="number"
+                defaultValue={motorChain.longitudinalStress}
+                InputProps={{
+                  className: classes.input,
+                }}
+              />
 
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="motor-chain-circunferential-stress"
-              onChange={(ev) => setCircunferentialStress(ev.target.value)}
-              label="Circunferential Stress (MPa)"
-              type="number"
-              defaultValue={motorChain.circumferentialStress}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-          </>
-        )}
+              <TextField
+                className={clsx(classes.textField, classes.margin)}
+                id="motor-chain-circunferential-stress"
+                onChange={(ev) => setCircunferentialStress(ev.target.value)}
+                label="Circunferential Stress (MPa)"
+                type="number"
+                defaultValue={motorChain.circumferentialStress}
+                InputProps={{
+                  className: classes.input,
+                }}
+              />
+              {checkIfMotorNeedRadiusStressField() && (
+                <Tooltip
+                  title="Only has to add a Radial Stress when the ratio Thickness/External Raidus is greater than 0.1"
+                  placeholder="bottom"
+                >
+                  <TextField
+                    className={clsx(classes.textField, classes.margin)}
+                    id="motor-chain-circunferential-stress"
+                    onChange={(ev) => setRadialStress(ev.target.value)}
+                    label="Radial Stress (MPa)"
+                    type="number"
+                    defaultValue={motorChain.radialStress}
+                    InputProps={{
+                      className: classes.input,
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </>
+          )}
+        </Paper>
       </div>
       <div className={classes.button}>
         <Tooltip title={messageError} placeholder="bottom">
@@ -316,7 +366,7 @@ function MotorChainInfo(props) {
                 calculateMotorChainProps(motorChain, calculationType)
               }
             >
-              COMO VAI O TCC?
+              Calculate
             </Button>
           </span>
         </Tooltip>
