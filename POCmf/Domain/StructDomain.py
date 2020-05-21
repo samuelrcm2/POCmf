@@ -38,18 +38,19 @@ class MotorChain:
             self.admissiveStress = fy if fy < fu else fu
         
     def calculateCircumferentialStress (self):
-        #Considering 100% weld eficiency 
-        #Considering external and internal internalRadius
-        self.circumferentialStress  = \
-            (self.workPressure * self.internalRadius) / self.thickness
-        
+        if self.thickness / self.internalRadius < 0.1: # It can considerate thin wall vessel
+            self.circumferentialStress  = \
+                (self.workPressure * self.internalRadius) / self.thickness
+        else:
+            externalRadius = self.internalRadius + self.thickness
+            self.circumferentialStress = self.workPressure * ((self.internalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) \
+                * (1 + (externalRadius ** 2)/(self.internalRadius ** 2))
+
     def calculateLongitudinalStress (self):
-        #TODO -- Considering external and internal internalRadius
-        # circumferential_area: float = \
-        #      ((self.internalRadius + self.thickness) ** 2 - self.internalRadius ** 2)
-        # circumferential_chain_area: float = (self.internalRadius ** 2)
-        self.longitudinalStress = \
-            (self.workPressure * self.internalRadius) / (2 * self.thickness)
+        if self.thickness / self.internalRadius < 0.1: # It can considerate thin wall vessel
+            self.longitudinalStress = \
+                (self.workPressure * self.internalRadius) / (2 * self.thickness)
+        else: self.longitudinalStress = 0
 
     def calculateMaxRadialStress (self):
         if self.thickness / self.internalRadius < 0.1: # It can considerate thin wall vessel

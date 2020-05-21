@@ -39,4 +39,4 @@ api.add_resource(AllMaterials, '/materials/getAllMaterials')
 api.add_resource(MaterialsById, '/materials/getMaterialById/<int:Id>')
 
 if __name__ == "__main__" :
-    app.run(port=5000)
+    app.run(port=5000, debug=True)

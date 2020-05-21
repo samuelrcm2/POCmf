@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) =>
       display: "flex",
       justifyContent: "center",
       paddingTop: "10px",
+      paddingBottom: "10px",
     },
     result: {
       color: "Black",
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) =>
       justifyContent: "flex-start",
     },
     resultPaper: {
+      width: "50%",
       marginRight: "5px",
     },
   })
@@ -172,7 +174,9 @@ function MotorChainInfo(props) {
     let responses = [];
     for (let [Key, value] of Object.entries(calculatedData)) {
       responses.push(
-        <li key={value}>{`${nameTranslations[Key]}: ${value} \n`}</li>
+        <li key={value}>{`${nameTranslations[Key]}: ${parseFloat(
+          value.toFixed(3)
+        )} \n`}</li>
       );
     }
     return isNilOrEmpty(responses) ? null : (
