@@ -65,14 +65,6 @@ const reducer = (state = INITIAL_STATE, action) => {
           materialId: action.payload,
         },
       };
-    case MotorChainActionsType.ADMISSIVE_STRESS_SETTED:
-      return {
-        ...state,
-        motorChain: {
-          ...state.motorChain,
-          admissiveStress: action.payload,
-        },
-      };
     case MotorChainActionsType.LONGITUDINAL_STRESS_SETTED:
       return {
         ...state,

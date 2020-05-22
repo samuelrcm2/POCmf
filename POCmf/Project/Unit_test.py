@@ -1,5 +1,5 @@
 import unittest
-from Domain import StructDomain 
+from Project.Domain import StructDomain 
 from Infra import MaterialInfra
 
 objectTest: object = {

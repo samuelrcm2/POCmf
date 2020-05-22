@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
-from Domain import StructDomain
-from Domain import MaterialsDomain
+from Project.Domain import MaterialsDomain
+from Project.Domain import StructDomain
 
 app = Flask(__name__)
 CORS(app)

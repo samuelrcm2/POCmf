@@ -1,4 +1,4 @@
-from Infra import MaterialInfra
+from Project.Infra import MaterialInfra
 
 class Materials:
     def __init__(self, Id, name, yeldStrength, ultimateStrength, density):
