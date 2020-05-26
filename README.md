@@ -1,6 +1,6 @@
 # POCmf
 ---
-Web application for structural simulation of solid propellant motor rockets (Programa de Otimzação Computacional de motores de fogutes) in portuguese. 
+Web application for structural simulation of solid propellant motor rockets (Programa de Otimização Computacional de motores de foguetes) in portuguese. 
 
 The application was built using React with Redux in javascript for the front-end and Python Flask in the back end with sqlLite3 for the database
 ## Requirements
