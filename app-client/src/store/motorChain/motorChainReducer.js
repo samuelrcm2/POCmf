@@ -89,7 +89,10 @@ const reducer = (state = INITIAL_STATE, action) => {
     case MotorChainActionsType.RADIAL_STRESS_SETTED:
       return {
         ...state,
-        radialStress: action.payload,
+        motorChain: {
+          ...state.motorChain,
+          radialStress: action.payload,
+        },
       };
     default:
       return { ...state };

@@ -28,8 +28,7 @@ const useStyles = makeStyles((theme) =>
     root: {
       paddingRight: "8px",
       "& .MuiTextField-root": {
-        margin: theme.spacing(1),
-        width: 150,
+        width: 130,
         color: "white",
         border: "white",
       },
@@ -54,7 +53,7 @@ const useStyles = makeStyles((theme) =>
     },
     formControl: {
       margin: theme.spacing(1),
-      minWidth: 120,
+      minWidth: 130,
     },
     select: {
       fontSize: "10px",
@@ -93,6 +92,9 @@ function MotorChainInfo(props) {
     setThickness,
     setWorkPressure,
     setMaterial,
+    setLongitudinalStress,
+    setCircunferentialStress,
+    setRadialStress,
     calculateMotorChainProps,
   } = props;
   useEffect(() => {
@@ -143,6 +145,24 @@ function MotorChainInfo(props) {
       return;
     }
 
+    if (calculationType !== CalculationTypes.MAIN_STRESSES) {
+      if (
+        isNilOrEmpty(motorChain.longitudinalStress) ||
+        isNilOrEmpty(motorChain.circumferentialStress)
+      ) {
+        setMessageError("Please, fill the Stresses field.");
+        setButtonState(true);
+        return;
+      }
+      if (
+        checkIfMotorNeedRadiusStressField() &&
+        isNilOrEmpty(motorChain.radialStress)
+      ) {
+        setMessageError("Please, fill the Radial Stress field.");
+        setButtonState(true);
+        return;
+      }
+    }
     setButtonState(false);
     setMessageError("");
   };
@@ -162,13 +182,25 @@ function MotorChainInfo(props) {
     );
   };
 
+  const checkIfMotorNeedRadiusStressField = () => {
+    if (calculationType === CalculationTypes.THICKNESS) return true;
+    if (
+      isNilOrEmpty(motorChain.thickness) ||
+      isNilOrEmpty(motorChain.internalRadius)
+    )
+      return false;
+    if (motorChain.thickness === 0 || motorChain.internalRadius === 0)
+      return false;
+
+    return motorChain.thickness / motorChain.internalRadius > 0.1;
+  };
   return (
     <div>
       <div className={classes.root}>
         <Paper>
           <FormControl className={classes.formControl} size="small">
             <InputLabel id="calculation-type-select-label">
-              Tipo de Cálculo
+              Calculation Type
             </InputLabel>
             <Select
               labelId="calculation-type-select-label"
@@ -264,6 +296,52 @@ function MotorChainInfo(props) {
               ))}
             </Select>
           </FormControl>
+
+          {calculationType !== CalculationTypes.MAIN_STRESSES && (
+            <>
+              <TextField
+                className={clsx(classes.textField, classes.margin)}
+                id="motor-chain-longitudinal-stress"
+                onChange={(ev) => setLongitudinalStress(ev.target.value)}
+                label="Longitudinal Stress (MPa)"
+                type="number"
+                defaultValue={motorChain.longitudinalStress}
+                InputProps={{
+                  className: classes.input,
+                }}
+              />
+
+              <TextField
+                className={clsx(classes.textField, classes.margin)}
+                id="motor-chain-circunferential-stress"
+                onChange={(ev) => setCircunferentialStress(ev.target.value)}
+                label="Circunferential Stress (MPa)"
+                type="number"
+                defaultValue={motorChain.circumferentialStress}
+                InputProps={{
+                  className: classes.input,
+                }}
+              />
+              {checkIfMotorNeedRadiusStressField() && (
+                <Tooltip
+                  title="Only has to add a Radial Stress when the ratio Thickness/External Raidus is greater than 0.1"
+                  placeholder="bottom"
+                >
+                  <TextField
+                    className={clsx(classes.textField, classes.margin)}
+                    id="motor-chain-circunferential-stress"
+                    onChange={(ev) => setRadialStress(ev.target.value)}
+                    label="Radial Stress (MPa)"
+                    type="number"
+                    defaultValue={motorChain.radialStress}
+                    InputProps={{
+                      className: classes.input,
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </>
+          )}
         </Paper>
       </div>
       <div className={classes.button}>

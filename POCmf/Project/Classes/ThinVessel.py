@@ -1,6 +1,6 @@
-from Project.Classes import MotorChain
+from Project.Classes.MotorChain import MotorChain
 
-class ThinVessel(MotorChain.MotorChain):
+class ThinVessel(MotorChain):
     def calculateCircumferentialStress (self):
         self.circumferentialStress  = \
             (self.workPressure * self.internalRadius) / self.thickness
@@ -44,7 +44,6 @@ class ThinVessel(MotorChain.MotorChain):
     @classmethod
     def motorChainThicknessCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
-        newMotorChain.calculatePrincipalStresses()
         newMotorChain.calculateThickness()
         return newMotorChain
     

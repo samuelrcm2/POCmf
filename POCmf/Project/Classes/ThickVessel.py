@@ -1,6 +1,8 @@
-from Project.Classes import MotorChain
+from Project.Classes.MotorChain import MotorChain
 
-class ThickVessel (MotorChain.MotorChain):
+ACCEPTABLE_ERROR = 0.0001
+
+class ThickVessel (MotorChain):
     def calculateCircumferentialStress (self):
         externalRadius = self.internalRadius + self.thickness
         self.circumferentialStress = self.workPressure * ((self.internalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) \
@@ -18,8 +20,25 @@ class ThickVessel (MotorChain.MotorChain):
 
 
     def calculateThickness (self):
-        #NOT IMPLEMMENTED
-        self.thickness = 0
+        #Using Newton's Method
+        radiusAdd = 1
+        estimatedExternalRadius = self.internalRadius + radiusAdd
+        radialStress: float 
+        while True:
+            if estimatedExternalRadius > self.internalRadius :
+                radialStress = self.calculateMaxRadialStressByExternalRadius(estimatedExternalRadius)
+                derivativeRadialStress = self.calculateMaxRadialStressDerivativeByExternalRadius(estimatedExternalRadius)
+                estimatedExternalRadius -= radialStress/derivativeRadialStress
+            else:
+                radiusAdd = radiusAdd/2
+                estimatedExternalRadius = self.internalRadius + radiusAdd
+                continue 
+
+            if radiusAdd < 0.02:
+                raise Exception('The value for Radial Stress cannot be real for the internal radius selected')
+            if self.radialStress - self.calculateMaxRadialStressByExternalRadius(estimatedExternalRadius) < ACCEPTABLE_ERROR:
+                break
+        self.thickness = estimatedExternalRadius - self.internalRadius
             
 
     def calculateSM (self):
@@ -29,6 +48,15 @@ class ThickVessel (MotorChain.MotorChain):
         self.calculateCircumferentialStress()
         self.calculateLongitudinalStress()
         self.calculateMaxRadialStress()
+
+    
+    def calculateMaxRadialStressByExternalRadius(self, externalRadius):
+        return self.workPressure * ((self.internalRadius ** 2 + externalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) 
+
+
+    def calculateMaxRadialStressDerivativeByExternalRadius(self, externalRadius):
+        return 4 * self.workPressure * (( externalRadius * self.internalRadius ** 2 ) / (externalRadius ** 2 - self.internalRadius ** 2 )**2) 
+
 
     @classmethod
     def motorChainSMCalculation(cls, motorChain):
@@ -42,7 +70,6 @@ class ThickVessel (MotorChain.MotorChain):
     @classmethod
     def motorChainThicknessCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
-        newMotorChain.calculatePrincipalStresses()
         newMotorChain.calculateThickness()
         return newMotorChain
     

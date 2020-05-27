@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from Project.Domain import MaterialsDomain
 from Project.Domain import StructDomain
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 CORS(app)
@@ -11,10 +12,27 @@ api = Api(app)
 def home():
     return "POCmf is in inicial stage of development"
 
+@app.errorhandler(ZeroDivisionError)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
+
 class MotorChain(Resource):
     def post (self):
         data = request.get_json()
-        result = StructDomain.handleMotorChainCalculationTypes(data['motorChain'], data['calculationType'])
+        try:
+            result = StructDomain.handleMotorChainCalculationTypes(data['motorChain'], data['calculationType'])
+        except Exception:
+            return {"message": Exception.args}, 500
         return result, 200        
     
 class AllMaterials(Resource):

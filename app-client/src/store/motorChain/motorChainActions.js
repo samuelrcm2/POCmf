@@ -9,7 +9,9 @@ export const getAllMaterials = () => {
       .then((response) => {
         dispatch(addAllMaterials(response.data));
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   };
 };
 
@@ -20,7 +22,9 @@ export const calculateMotorChainProps = (motorChain, calculationType) => {
       .then((response) => {
         dispatch(setMotorChainProps(response.data));
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   };
 };
 

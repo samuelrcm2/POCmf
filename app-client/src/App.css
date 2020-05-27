@@ -2,11 +2,24 @@
   background-color: lightgray;
   color: white;
 }
-/* .Main .MuiTextField-root {
+
+.Main .root .MuiTextField-root {
+  max-width: 150;
+  color: white;
+  border: white;
+}
+
+.Main .root .MuiFormLabel-root {
+  font-size: 10px;
+}
+.Main .root .MuiInputBase-input {
+  font-size: 10px;
+}
+/* .Main .Main .MuiTextField-root {
   color: white;
   border-color: white;
 }
-.Main .MuiInputBase-root {
+.Main .Main .MuiInputBase-root {
   color: white;
   border-color: white;
 } */
