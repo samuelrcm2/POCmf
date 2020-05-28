@@ -15,6 +15,7 @@ const reducer = (state = INITIAL_STATE, action) => {
     case MotorChainActionsType.CALCULASTION_TYPE_SETTED:
       return {
         ...state,
+        motorChain: INITIAL_STATE.motorChain,
         calculationType: action.payload,
       };
     case MotorChainActionsType.INTERNAL_RADIUS_SETTED:
