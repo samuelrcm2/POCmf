@@ -169,11 +169,12 @@ function MotorChainInfo(props) {
   const displayCalculatedData = () => {
     let responses = [];
     for (let [Key, value] of Object.entries(calculatedData)) {
-      responses.push(
-        <li key={value}>{`${nameTranslations[Key]}: ${parseFloat(
-          value.toFixed(3)
-        )} \n`}</li>
-      );
+      if (value != null)
+        responses.push(
+          <li key={value}>{`${nameTranslations[Key]}: ${parseFloat(
+            value.toFixed(3)
+          )} \n`}</li>
+        );
     }
     return isNilOrEmpty(responses) ? null : (
       <Paper className={classes.resultPaper}>

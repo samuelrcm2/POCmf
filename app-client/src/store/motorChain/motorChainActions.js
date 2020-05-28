@@ -7,7 +7,7 @@ export const getAllMaterials = () => {
     api
       .get("/materials/getAllMaterials")
       .then((response) => {
-        dispatch(addAllMaterials(response.data));
+        if (response) dispatch(addAllMaterials(response.data));
       })
       .catch((error) => {
         console.log(error);
@@ -20,7 +20,7 @@ export const calculateMotorChainProps = (motorChain, calculationType) => {
     api
       .post("/motorChain/", { motorChain, calculationType })
       .then((response) => {
-        dispatch(setMotorChainProps(response.data));
+        if (response) dispatch(setMotorChainProps(response.data));
       })
       .catch((error) => {
         console.log(error);

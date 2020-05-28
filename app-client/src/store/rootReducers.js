@@ -1,9 +1,10 @@
 import { combineReducers } from "redux";
 
 import motorChain from "./motorChain/motorChainReducer";
-
+import alert from "./Alert/alertReducer";
 export default combineReducers({
   motorChain,
+  alert,
 });
 
 // import { createStore, Store, applyMiddleware, compose } from "redux";

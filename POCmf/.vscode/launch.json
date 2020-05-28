@@ -15,7 +15,7 @@
         "FLASK_DEBUG": "0",
         "FLASK_URL": "http://localhost:4200"
       },
-      "args": ["run", "--no-debugger", "--no-reload"],
+      "args": ["run", "--no-reload"],
       "jinja": true
     }
   ]

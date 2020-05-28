@@ -7,6 +7,7 @@ import MotorView from "./components/MotorView/MotorView";
 import { MotorChain } from "./store/motorChain/motorChainTypes";
 import store from "./store/store";
 import Loader from "./components/Generic/Loader";
+import GenericAlert from "./components/Generic/Alert";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -35,6 +36,7 @@ const App = () => (
             </Grid>
           </Grid>
         </div>
+        <GenericAlert />
       </Loader>
     </ThemeProvider>
   </Provider>
