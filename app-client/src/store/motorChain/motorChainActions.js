@@ -1,17 +1,12 @@
 import api from "../../Services/api";
 import { MotorChainActionsType } from "./motorChainTypes";
-
+import { changeGenericAlert } from "../Alert/alertActions";
 //Requests
 export const getAllMaterials = () => {
   return (dispatch) => {
-    api
-      .get("/materials/getAllMaterials")
-      .then((response) => {
-        if (response) dispatch(addAllMaterials(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    api.get("/materials/getAllMaterials").then((response) => {
+      if (response) dispatch(addAllMaterials(response.data));
+    });
   };
 };
 
@@ -20,10 +15,10 @@ export const calculateMotorChainProps = (motorChain, calculationType) => {
     api
       .post("/motorChain/", { motorChain, calculationType })
       .then((response) => {
-        if (response) dispatch(setMotorChainProps(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
+        dispatch(setMotorChainProps(response.data));
+        dispatch(
+          changeGenericAlert("Properties calculated successfully", "success")
+        );
       });
   };
 };

@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     "& > * + *": {
       marginTop: theme.spacing(2),
     },
+    zIndex: 99999999999,
   },
 }));
 
@@ -37,13 +38,14 @@ const Alert = (props) => {
       },
       (error) => {
         if (isNotNilOrEmpty(error.response)) {
-          changeGenericAlert(error.response, "error");
+          changeGenericAlert(error.response.data.message, "error");
         }
+        return Promise.reject(error);
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  console.log("rodei", props);
   const handleClose = (_, reason) => {
     if (reason === "clickaway") {
       return;
@@ -63,6 +65,7 @@ const Alert = (props) => {
 };
 
 const mapStateToProps = (state) => ({
+  active: state.alert.active,
   message: state.alert.message,
   type: state.alert.type,
 });

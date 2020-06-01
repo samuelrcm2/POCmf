@@ -12,7 +12,6 @@ CORS(app)
 api = Api(app)
 
 @app.errorhandler(Exception)
-@cross_origin()
 def handle_exception(e):
     if isinstance(e, HTTPException):
         return e
@@ -26,18 +25,12 @@ def handle_exception(e):
 def home():
     return "POCmf is in inicial stage of development"
 
-
 class MotorChain(Resource):
     def post (self):
         data = request.get_json()
-        # try:
         result = StructDomain.handleMotorChainCalculationTypes(data['motorChain'], data['calculationType'])
-        # except Exception as ex:
-        #     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        #     message = template.format(type(ex).__name__, ex.args)
-        #     return message, 400
         if result:
-            return result, 202      
+            return result, 200      
     
 class AllMaterials(Resource):
     def get (self):
