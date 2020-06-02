@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right= 2.5cm]{geometry}
+
+\usepackage[letterspace=60]{microtype} % Espaçamento entre as letras
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{eurosym}
+\usepackage{multirow} % Tabelas de formatação complexa
+\usepackage{indentfirst} %Identar o primeiro parágrafo da seção
+\usepackage[brazil]{babel} % Hifens e textos segundo as regras da língua portuguesa (Brasil)[e.g.: References -> Referências]
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{ragged2e} % https://www.overleaf.com/learn/latex/Text_alignment
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{pdfpages}
+\usepackage{hyphenat}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+% https://tex.stackexchange.com/questions/78842/nested-enumeration-numbering
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+
+\begin{document}
+\include{00Capa}
+
+\lsstyle % Espaçamento entre as letras
+% \begin{hyphenrules}{nohyphenation} -- Inibe hifens
+
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+% Inclui o arquivo "01Objetivo.tex" existente neste projeto
+\include{01Resumo}
+
+\include{02Objetivo}
+
+\include{03Justificativa}
+
+\include{04Introducao}
+
+\include{05RevisaoBibliografica}
+
+\include{06Metodologia}
+
+\include{07DiscussaoDeResultados}
+
+\include{08Conclusoes}
+
+\include{09ReferenciasBibliograficas}
+
+\include{10Cronograma}
+%\end{hyphenrules}
+\end{document}
