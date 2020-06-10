@@ -1,3 +1,4 @@
 Flask
 Flask-restful
 Flask-CORS
+flask-restplus

@@ -3,11 +3,13 @@ from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS, cross_origin
 from Project.Domain import MaterialsDomain
 from Project.Domain import StructDomain
+from Project.Domain import ScrewDomain
 from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
-app.config['TRAP_HTTP_EXCEPTIONS']=True
-app.config['PROPAGATE_EXCEPTIONS'] =True
+app.config['TRAP_HTTP_EXCEPTIONS'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
 CORS(app) 
 api = Api(app)
 
@@ -34,7 +36,7 @@ class MotorChain(Resource):
     
 class AllMaterials(Resource):
     def get (self):
-        materials = MaterialsDomain.Materials.getAllMaterials()
+        materials = MaterialsDomain.getAllMaterials()
         if materials:
             return materials, 200
         else:
@@ -42,16 +44,21 @@ class AllMaterials(Resource):
         
 class MaterialsById(Resource):
     def get (self, Id):
-        material = MaterialsDomain.Materials.getMaterialById(Id)
+        material = MaterialsDomain.getMaterialById(Id)
         if material:
             return material, 200
         else: 
             return {"message": "Material not found"}, 404
     
-    
+class AllScrewPatterns(Resource):
+    def get(self):
+        screwPatterns = ScrewDomain.getAllScrewPatterns()
+        return screwPatterns, 200
+
 api.add_resource(MotorChain, '/motorChain/')
 api.add_resource(AllMaterials, '/materials/getAllMaterials')
 api.add_resource(MaterialsById, '/materials/getMaterialById/<int:Id>')
+api.add_resource(AllScrewPatterns, '/screPatterns/')
 
 if __name__ == "__main__" :
     app.run(port=5000, Debug=True)
