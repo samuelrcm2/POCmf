@@ -1,7 +1,8 @@
 from Project.Domain import MaterialsDomain
+from Project.Classes.ProjectHandler import ProjectHandler
 import math
 
-class MotorChain:
+class MotorChain (ProjectHandler):
     def __init__ (self, motorChain):
         self.internalRadius: float = motorChain['internalRadius']
         self.height: float = motorChain['height']

@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify, json
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS, cross_origin
+from Project.Domain import HeadChainDomain
 from Project.Domain import MaterialsDomain
-from Project.Domain import StructDomain
+from Project.Domain import MotorChainDomain
 from Project.Domain import ScrewDomain
 from werkzeug.exceptions import HTTPException
 
@@ -30,7 +31,7 @@ def home():
 class MotorChain(Resource):
     def post (self):
         data = request.get_json()
-        result = StructDomain.handleMotorChainCalculationTypes(data['motorChain'], data['calculationType'])
+        result = MotorChainDomain.handleMotorChainCalculationTypes(data['motorChain'], data['calculationType'])
         if result:
             return result, 200      
     
@@ -55,10 +56,17 @@ class AllScrewPatterns(Resource):
         screwPatterns = ScrewDomain.getAllScrewPatterns()
         return screwPatterns, 200
 
+class HeadMotor(Resource):
+    def get(self):
+        data = request.get_json()
+        newHeadMotor = HeadChainDomain.defineScrewBySelectedScrew(data)
+        return newHeadMotor, 200
+
 api.add_resource(MotorChain, '/motorChain/')
 api.add_resource(AllMaterials, '/materials/getAllMaterials')
 api.add_resource(MaterialsById, '/materials/getMaterialById/<int:Id>')
 api.add_resource(AllScrewPatterns, '/screPatterns/')
+api.add_resource(HeadMotor, '/headMotor/')
 
 if __name__ == "__main__" :
     app.run(port=5000, Debug=True)

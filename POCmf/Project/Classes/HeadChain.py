@@ -1,20 +1,79 @@
 from Project.Classes.Screw import Screw
+from Project.Classes.Material import Materials
+from Project.Classes.ProjectHandler import ProjectHandler
 import math
 
-class HeadChain :
+class HeadChain(ProjectHandler) :
     def __init__(self, headChain):
-        self.topThickness: float = headChain["topThickness"]
-        self.sideThickness: float = headChain["sideThickness"]
-        self.scrwPattern: Screw = {}
+        self.screwPattern: Screw = Screw(headChain["headScrew"]["id"],headChain["headScrew"]["name"],headChain["headScrew"]["pitch"],headChain["headScrew"]["minMinorDiameter"],headChain["headScrew"]["maxMinorDiameter"],headChain["headScrew"]["minMajorDiameter"],headChain["headScrew"]["maxMajorDiameter"],)
         self.screwHeight: float = headChain["screwHeight"]
-        self.headHeight: float = headChain["headHeight"]
+        self.internalHeadHeight: float = headChain["internalHeadHeight"]
+        self.externalHeadHeight: float = headChain["externalHeadHeight"]
         self.workPressure: float = headChain["workPressure"]
         self.internalRadius: float = headChain["internalRadius"]
+        self.thickness: float = headChain["thickness"]
+        self.yeldStrength: float = headChain["yeldStrength"]
         self.maxForce: float = None
+        self.cogHeight: float = None
+        self.maxPressureSupported: float = None
+        self.selectPrimitiveDiameter: float = None
+        self.selectedMajorDiameter: float = None
+        self.selectedMinorDiameter: float = None
+
+    def calculateCogHeight(self, pitch):
+        self.cogHeight = math.sqrt(3) * pitch / 2
+
+    def calculatePrimitiveDiameter(self):
+        self.selectPrimitiveDiameter = self.selectedMajorDiameter - 0.75 * self.cogHeight
+
+    def calculateMaxPressureSupported(self):
+        self.maxPressureSupported = (1.25 * self.cogHeight * self.selectPrimitiveDiameter * self.yeldStrength)/(0.38 * self.selectedMajorDiameter ** 2)
 
     def calculateMaxForce(self):
         self.maxForce = math.pi * (self.internalRadius ** 2) * self.workPressure
 
-    
+    def defineDiametersByMinimumDiameter(self, minimumDiameter):
+        self.selectedMinorDiameter = minimumDiameter if minimumDiameter > self.internalRadius and \
+            minimumDiameter > self.screwPattern.minMinorDiameter else self.screwPattern.minMinorDiameter
+        self.selectedMajorDiameter = self.selectedMinorDiameter + 0.69717 * self.cogHeight
+        if (not self.defineIfScrewPatternIsPossible()):
+            raise Exception("The thickness defined cannot be used to the pitch choosed. PLease define a thicker veise or e smaller pitch.")
+
+    def defineIfScrewPatternIsPossible(self):
+        if (self.selectedMajorDiameter > (self.internalRadius + self.thickness)):
+            return False
+        if (self.cogHeight > self.thickness): 
+            return False
+        return True
+
+    @classmethod
+    def defineScrewBySelectedScrew(cls, headChain):
+        newHeadChain = cls(headChain)
+        newHeadChain.calculateCogHeight(newHeadChain.screwPattern.pitch)
+        newHeadChain.defineDiametersByMinimumDiameter(newHeadChain.internalRadius)
+        newHeadChain.calculatePrimitiveDiameter()
+        newHeadChain.calculateMaxPressureSupported()
+        return newHeadChain.serialize()
+
+    def defineIfScrewProjectIsCorrect(self):
+        pass
+
+    def serialize(self):
+        return {
+            "screwPattern": self.screwPattern.serialize(),
+            "screwHeight": self.screwHeight,
+            "internalHeadHeight": self.internalHeadHeight,
+            "externalHeadHeight": self.externalHeadHeight,
+            "workPressure": self.workPressure,
+            "internalRadius": self.internalRadius,
+            "thickness": self.thickness,
+            "yeldStrength": self.yeldStrength,
+            "maxForce": self.maxForce,
+            "cogHeight": self.cogHeight,
+            "maxPressureSupported": self.maxPressureSupported,
+            "selectPrimitiveDiameter": self.selectPrimitiveDiameter,
+            "selectedMajorDiameter": self.selectedMajorDiameter,
+            "selectedMinorDiameter": self.selectedMinorDiameter
+        }
 
 
