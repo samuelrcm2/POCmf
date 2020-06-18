@@ -182,7 +182,6 @@ function MotorChainInfo(props) {
       </Paper>
     );
   };
-
   const checkIfMotorNeedRadiusStressField = () => {
     if (calculationType === CalculationTypes.THICKNESS) return true;
     if (
