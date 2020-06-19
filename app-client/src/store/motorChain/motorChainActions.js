@@ -114,3 +114,9 @@ export const setRadialStress = (value) => {
     payload: Number(value),
   };
 };
+
+export const setButtonState = () => {
+  return {
+    type: MotorChainActionsType.BUTTON_STATE_SETTED,
+  };
+};

@@ -73,17 +73,18 @@ const useStyles = makeStyles((theme) =>
 const HeadMotor = (props) => {
   const classes = useStyles();
   useEffect(() => {
-    props.ScrewPatternActionsType();
+    props.getAllScrewPatterns();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const {
     screwPatterns,
     headMotor,
-    setScrewPattern,
+    setSelectedScrew,
     setExternalHeight,
     setInternalHeight,
     setScrewHeight,
     calculateScrewMaxStress,
+    motorChainButtonIsDisabled,
   } = props;
   useEffect(() => {
     checkIfHasData();
@@ -93,7 +94,7 @@ const HeadMotor = (props) => {
   const [buttonIsDisabled, setButtonState] = useState(true);
 
   const checkIfHasData = () => {
-    if (isNilOrEmpty(headMotor.selectedScrew.id)) {
+    if (isNilOrEmpty(headMotor.screwPattern.id)) {
       setMessageError("Please, select a Screw Pattern.");
       setButtonState(true);
       return;
@@ -121,9 +122,10 @@ const HeadMotor = (props) => {
   };
   const SetScrewPattern = (screwPatternId) => {
     let screw = screwPatterns.find((s) => (s.id = screwPatternId));
-    setScrewPattern(screw);
+    setSelectedScrew(screw);
   };
 
+  if (motorChainButtonIsDisabled) return null;
   return (
     <div>
       <div className={classes.root}>
@@ -135,7 +137,7 @@ const HeadMotor = (props) => {
             <Select
               labelId="screw-type-select-label"
               id="screw-type-select"
-              value={headMotor.selectedScrew.id}
+              value={headMotor.screwPattern.id}
               onChange={(ev) => SetScrewPattern(ev.target.value)}
             >
               <MenuItem key={0} value={0}>
@@ -209,6 +211,7 @@ const HeadMotor = (props) => {
 const mapStateToProps = (state) => ({
   screwPatterns: state.headMotor.screwPatterns,
   headMotor: state.headMotor.headMotor,
+  motorChainButtonIsDisabled: state.motorChain.buttonIsDisabled,
 });
 
 const mapDispatchToProps = (dispatch) => {

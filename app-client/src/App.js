@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 
 import SideBar from "./components/SideBar/SideBar";
 import MotorChainComponent from "./components/MotorChain/MotorChain";
+import HeadMotorComponent from "./components/HeadMotor/HeadMotor";
 import MotorView from "./components/MotorView/MotorView";
 import { MotorChain } from "./store/motorChain/motorChainTypes";
 import store from "./store/store";
@@ -33,6 +34,7 @@ const App = () => (
             </Grid>
             <Grid item xs={6}>
               <MotorChainComponent motorChain={new MotorChain()} />
+              <HeadMotorComponent />
             </Grid>
           </Grid>
         </div>

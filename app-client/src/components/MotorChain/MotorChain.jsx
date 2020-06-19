@@ -96,6 +96,8 @@ function MotorChainInfo(props) {
     setCircunferentialStress,
     setRadialStress,
     calculateMotorChainProps,
+    buttonIsDisabled,
+    setButtonState,
   } = props;
   useEffect(() => {
     checkIfHasData();
@@ -104,35 +106,34 @@ function MotorChainInfo(props) {
 
   const classes = useStyles();
   const [messageError, setMessageError] = useState("");
-  const [buttonIsDisabled, setButtonState] = useState(true);
   const checkIfHasData = () => {
     if (isNilOrEmpty(calculationType)) {
       setMessageError("Please, select a Calculation Type.");
-      setButtonState(true);
+      SetButtonState(true);
       return;
     }
 
     if (isNilOrEmpty(motorChain.internalRadius)) {
       setMessageError("Please, fill the External Radius field.");
-      setButtonState(true);
+      SetButtonState(true);
       return;
     }
 
     if (isNilOrEmpty(motorChain.height)) {
       setMessageError("Please, fill the Height field.");
-      setButtonState(true);
+      SetButtonState(true);
       return;
     }
 
     if (isNilOrEmpty(motorChain.workPressure)) {
       setMessageError("Please, fill the Work Pressure field.");
-      setButtonState(true);
+      SetButtonState(true);
       return;
     }
 
     if (isNilOrEmpty(motorChain.materialId)) {
       setMessageError("Please, select a Material.");
-      setButtonState(true);
+      SetButtonState(true);
       return;
     }
 
@@ -141,7 +142,7 @@ function MotorChainInfo(props) {
       isNilOrEmpty(motorChain.thickness)
     ) {
       setMessageError("Please, fill the Thickness field.");
-      setButtonState(true);
+      SetButtonState(true);
       return;
     }
 
@@ -151,7 +152,7 @@ function MotorChainInfo(props) {
         isNilOrEmpty(motorChain.circumferentialStress)
       ) {
         setMessageError("Please, fill the Stresses field.");
-        setButtonState(true);
+        SetButtonState(true);
         return;
       }
       if (
@@ -159,12 +160,15 @@ function MotorChainInfo(props) {
         isNilOrEmpty(motorChain.radialStress)
       ) {
         setMessageError("Please, fill the Radial Stress field.");
-        setButtonState(true);
+        SetButtonState(true);
         return;
       }
     }
-    setButtonState(false);
+    SetButtonState(false);
     setMessageError("");
+  };
+  const SetButtonState = (newState) => {
+    if (newState !== buttonIsDisabled) setButtonState();
   };
   const displayCalculatedData = () => {
     let responses = [];
@@ -370,6 +374,7 @@ const mapStateToProps = (state) => ({
   materials: state.motorChain.allMaterials,
   calculationType: state.motorChain.calculationType,
   calculatedData: state.motorChain.calculatedData,
+  buttonIsDisabled: state.motorChain.buttonIsDisabled,
 });
 
 const mapDispatchToProps = (dispatch) => {

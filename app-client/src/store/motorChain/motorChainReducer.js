@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   calculationType: "",
   calculatedData: {},
   allMaterials: [],
+  buttonIsDisabled: true,
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
@@ -94,6 +95,11 @@ const reducer = (state = INITIAL_STATE, action) => {
           ...state.motorChain,
           radialStress: action.payload,
         },
+      };
+    case MotorChainActionsType.BUTTON_STATE_SETTED:
+      return {
+        ...state,
+        buttonIsDisabled: !state.buttonIsDisabled,
       };
     default:
       return { ...state };

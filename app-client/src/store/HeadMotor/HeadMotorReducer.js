@@ -8,12 +8,15 @@ const INITIAL_STATE = {
   externalHeadHeight: 0,
   maxScrewStress: null,
   screwPatterns: [],
+  screwPatternsByDiameter: [],
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case HeadMotorActionsType.SCREW_PATTERN_GETTED:
       return { ...state, screwPatterns: action.payload };
+    case HeadMotorActionsType.SCREW_PATTERN_BY_DIAMETER_GETTED:
+      return { ...state, screwPatternsByDiameter: action.payload };
     case HeadMotorActionsType.SELECT_SCREW_PATTERN_SETTED:
       return {
         ...state,

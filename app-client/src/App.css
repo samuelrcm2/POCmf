@@ -1,12 +1,26 @@
 .Main {
   background-color: lightgray;
   color: white;
+  height: 100%;
+  width: 100%;
 }
 
 .Main .root .MuiTextField-root {
   max-width: 150;
   color: white;
   border: white;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* use viewport-relative units to cover page fully */
+body {
+  height: 100vh;
+  width: 100vw;
 }
 
 .Main .root .MuiFormLabel-root {

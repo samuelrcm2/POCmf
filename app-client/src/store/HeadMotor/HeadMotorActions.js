@@ -4,8 +4,16 @@ import { changeGenericAlert } from "../Alert/alertActions";
 
 export const getAllScrewPatterns = () => {
   return (dispatch) => {
-    api.get("/screPatterns/").then((response) => {
+    api.get("/screwPatterns/").then((response) => {
       if (response) dispatch(addAllScrewPatterns(response.data));
+    });
+  };
+};
+
+export const getScrewPatternsByDiameter = (diameters) => {
+  return (dispatch) => {
+    api.get("/screwPatterns/getByDiamter/", diameters).then((response) => {
+      if (response) dispatch(addScrewPatternsByDiameter(response.data));
     });
   };
 };
@@ -13,15 +21,28 @@ export const getAllScrewPatterns = () => {
 export const calculateScrewMaxStress = (headMotor) => {
   return (dispatch) => {
     api.get("/headMotor/", headMotor).then((response) => {
-      if (response) dispatch(setScrewMaxStress(response.data));
+      if (response) {
+        dispatch(setScrewMaxStress(response.data));
+        dispatch(
+          changeGenericAlert("Properties calculated successfully", "success")
+        );
+      }
     });
   };
 };
 
 //Actions
 export const addAllScrewPatterns = (screwPatterns) => {
+  console.log(HeadMotorActionsType);
   return {
-    type: HeadMotorActionsType.MATERIALS_GETTED,
+    type: HeadMotorActionsType.SCREW_PATTERN_GETTED,
+    payload: screwPatterns,
+  };
+};
+
+export const addScrewPatternsByDiameter = (screwPatterns) => {
+  return {
+    type: HeadMotorActionsType.SCREW_PATTERN_BY_DIAMETER_GETTED,
     payload: screwPatterns,
   };
 };

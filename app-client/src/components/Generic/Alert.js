@@ -45,7 +45,6 @@ const Alert = (props) => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log("rodei", props);
   const handleClose = (_, reason) => {
     if (reason === "clickaway") {
       return;
