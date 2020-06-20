@@ -55,7 +55,7 @@ class ThickVessel (MotorChain):
 
 
     def calculateMaxRadialStressDerivativeByExternalRadius(self, externalRadius):
-        return 4 * self.workPressure * (( externalRadius * self.internalRadius ** 2 ) / (externalRadius ** 2 - self.internalRadius ** 2 )**2) 
+        return -4 * self.workPressure * (( externalRadius * self.internalRadius ** 2 ) / (externalRadius ** 2 - self.internalRadius ** 2 )**2) 
 
 
     @classmethod

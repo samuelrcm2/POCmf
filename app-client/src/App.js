@@ -23,10 +23,10 @@ const theme = createMuiTheme({
 });
 
 const App = () => (
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <Loader>
-        <div className="Main">
+  <div className="Main">
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <Loader>
           <SideBar />
           <Grid container spacing={1}>
             <Grid item xs={6}>
@@ -37,11 +37,11 @@ const App = () => (
               <HeadMotorComponent />
             </Grid>
           </Grid>
-        </div>
-        <GenericAlert />
-      </Loader>
-    </ThemeProvider>
-  </Provider>
+          <GenericAlert />
+        </Loader>
+      </ThemeProvider>
+    </Provider>
+  </div>
 );
 
 export default App;

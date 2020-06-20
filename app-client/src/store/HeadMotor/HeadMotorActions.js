@@ -13,7 +13,7 @@ export const getAllScrewPatterns = () => {
 export const getScrewPatternsByDiameter = (diameters) => {
   return (dispatch) => {
     api.get("/screwPatterns/getByDiamter/", diameters).then((response) => {
-      if (response) dispatch(addScrewPatternsByDiameter(response.data));
+      if (response) dispatch(setPossibleScrewPatterns(response.data));
     });
   };
 };
@@ -33,14 +33,13 @@ export const calculateScrewMaxStress = (headMotor) => {
 
 //Actions
 export const addAllScrewPatterns = (screwPatterns) => {
-  console.log(HeadMotorActionsType);
   return {
     type: HeadMotorActionsType.SCREW_PATTERN_GETTED,
     payload: screwPatterns,
   };
 };
 
-export const addScrewPatternsByDiameter = (screwPatterns) => {
+export const setPossibleScrewPatterns = (screwPatterns) => {
   return {
     type: HeadMotorActionsType.SCREW_PATTERN_BY_DIAMETER_GETTED,
     payload: screwPatterns,
@@ -78,6 +77,41 @@ export const setScrewHeight = (value) => {
 const setScrewMaxStress = (value) => {
   return {
     type: HeadMotorActionsType.SCREW_MAX_STRESS,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewPitch = (value) => {
+  return {
+    type: HeadMotorActionsType.CREATED_PITCH_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMinMinorDiameter = (value) => {
+  return {
+    type: HeadMotorActionsType.CREATED_MIN_MINOR_DIAMETER_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMaxMinorDiameter = (value) => {
+  return {
+    type: HeadMotorActionsType.CREATED_MAX_MINOR_DIAMETER_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMinMajorDiameter = (value) => {
+  return {
+    type: HeadMotorActionsType.CREATED_MIN_MAJOR_DIAMETER_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMaxMajorDiameter = (value) => {
+  return {
+    type: HeadMotorActionsType.CREATED_MAX_MAJOR_DIAMETER_SCREW_SETTED,
     payload: value,
   };
 };

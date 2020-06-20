@@ -14,7 +14,11 @@ const INITIAL_STATE = {
 const reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case HeadMotorActionsType.SCREW_PATTERN_GETTED:
-      return { ...state, screwPatterns: action.payload };
+      return {
+        ...state,
+        screwPatterns: action.payload,
+        screwPatternsByDiameter: action.payload,
+      };
     case HeadMotorActionsType.SCREW_PATTERN_BY_DIAMETER_GETTED:
       return { ...state, screwPatternsByDiameter: action.payload };
     case HeadMotorActionsType.SELECT_SCREW_PATTERN_SETTED:
@@ -39,6 +43,62 @@ const reducer = (state = INITIAL_STATE, action) => {
       };
     case HeadMotorActionsType.SCREW_MAX_STRESS:
       return { ...state, maxScrewStress: action.payload };
+    case HeadMotorActionsType.CREATED_PITCH_SCREW_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          screwPattern: {
+            ...state.headMotor.screwPattern,
+            pitch: action.payload,
+            id: 0,
+          },
+        },
+      };
+    case HeadMotorActionsType.CREATED_MIN_MINOR_DIAMETER_SCREW_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          screwPattern: {
+            ...state.headMotor.screwPattern,
+            minMinorDiameter: action.payload,
+          },
+        },
+      };
+    case HeadMotorActionsType.CREATED_MAX_MINOR_DIAMETER_SCREW_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          screwPattern: {
+            ...state.headMotor.screwPattern,
+            maxMinorDiameter: action.payload,
+          },
+        },
+      };
+    case HeadMotorActionsType.CREATED_MIN_MAJOR_DIAMETER_SCREW_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          screwPattern: {
+            ...state.headMotor.screwPattern,
+            minMajorDiameter: action.payload,
+          },
+        },
+      };
+    case HeadMotorActionsType.CREATED_MAX_MAJOR_DIAMETER_SCREW_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          screwPattern: {
+            ...state.headMotor.screwPattern,
+            maxMajorDiameter: action.payload,
+          },
+        },
+      };
     default:
       return { ...state };
   }

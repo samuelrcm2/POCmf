@@ -1,6 +1,7 @@
 import api from "../../Services/api";
-import { MotorChainActionsType } from "./motorChainTypes";
+import { MotorChainActionsType, CalculationTypes } from "./motorChainTypes";
 import { changeGenericAlert } from "../Alert/alertActions";
+import store from "../store";
 //Requests
 export const getAllMaterials = () => {
   return (dispatch) => {
@@ -32,9 +33,15 @@ const addAllMaterials = (materials) => {
 };
 
 const setMotorChainProps = (motorChainProps) => {
-  return {
-    type: MotorChainActionsType.MOTORCHAIN_PROPS_SETTED,
-    payload: motorChainProps,
+  return (dispatch) => {
+    if (
+      store.getState().motorChain.calculationType === CalculationTypes.THICKNESS
+    )
+      dispatch(setThickness(motorChainProps.thickness));
+    dispatch({
+      type: MotorChainActionsType.MOTORCHAIN_PROPS_SETTED,
+      payload: motorChainProps,
+    });
   };
 };
 
