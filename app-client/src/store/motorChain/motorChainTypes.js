@@ -103,4 +103,5 @@ export const nameTranslations = {
   radialStress: "Radial Stress",
   SM: "Safety Margin",
   thickness: "Thicknesss",
+  maxStressSupported: "Screw Maximum Stress Supported",
 };

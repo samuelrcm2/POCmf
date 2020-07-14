@@ -5,14 +5,15 @@ import math
 
 class HeadChain(ProjectHandler) :
     def __init__(self, headChain):
-        self.screwPattern: Screw = Screw(headChain["headScrew"]["id"],headChain["headScrew"]["name"],headChain["headScrew"]["pitch"],headChain["headScrew"]["minMinorDiameter"],headChain["headScrew"]["maxMinorDiameter"],headChain["headScrew"]["minMajorDiameter"],headChain["headScrew"]["maxMajorDiameter"],)
+        self.screwPattern: Screw = Screw(headChain["screwPattern"]["id"],headChain["screwPattern"]["name"],headChain["screwPattern"]["pitch"],headChain["screwPattern"]["minMinorDiameter"],headChain["screwPattern"]["maxMinorDiameter"],headChain["screwPattern"]["minMajorDiameter"],headChain["screwPattern"]["maxMajorDiameter"])
         self.screwHeight: float = headChain["screwHeight"]
         self.internalHeadHeight: float = headChain["internalHeadHeight"]
         self.externalHeadHeight: float = headChain["externalHeadHeight"]
         self.workPressure: float = headChain["workPressure"]
         self.internalRadius: float = headChain["internalRadius"]
         self.thickness: float = headChain["thickness"]
-        self.yeldStrength: float = headChain["yeldStrength"]
+        self.materialId: float = headChain["materialId"]
+        self.yeldStrength: float = None
         self.maxForce: float = None
         self.cogHeight: float = None
         self.maxPressureSupported: float = None
@@ -46,14 +47,18 @@ class HeadChain(ProjectHandler) :
             return False
         return True
 
+    def getYeldStrength(self):
+        self.yeldStrength = Materials.getMaterialById(self.materialId)['yeldStrength']
+
     @classmethod
     def defineScrewBySelectedScrew(cls, headChain):
         newHeadChain = cls(headChain)
+        newHeadChain.getYeldStrength()
         newHeadChain.calculateCogHeight(newHeadChain.screwPattern.pitch)
         newHeadChain.defineDiametersByMinimumDiameter(newHeadChain.internalRadius)
         newHeadChain.calculatePrimitiveDiameter()
         newHeadChain.calculateMaxPressureSupported()
-        return newHeadChain.serialize()
+        return newHeadChain.maxPressureSupported
 
     def defineIfScrewProjectIsCorrect(self):
         pass

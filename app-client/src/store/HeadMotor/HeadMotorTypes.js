@@ -7,36 +7,36 @@ export class ScrewPattern {
   minMajorDiameter;
   maxMajorDiameter;
 
-  constructor(screwpattern) {
-    this.id = screwpattern ? (screwpattern.id ? screwpattern.id : "") : "";
-    this.name = screwpattern
-      ? screwpattern.name
-        ? screwpattern.name
+  constructor(screwPattern) {
+    this.id = screwPattern ? (screwPattern.id ? screwPattern.id : "") : "";
+    this.name = screwPattern
+      ? screwPattern.name
+        ? screwPattern.name
         : ""
       : "";
-    this.pitch = screwpattern
-      ? screwpattern.pitch
-        ? screwpattern.pitch
+    this.pitch = screwPattern
+      ? screwPattern.pitch
+        ? screwPattern.pitch
         : ""
       : "";
-    this.minMinorDiameter = screwpattern
-      ? screwpattern.minMinorDiameter
-        ? screwpattern.minMinorDiameter
+    this.minMinorDiameter = screwPattern
+      ? screwPattern.minMinorDiameter
+        ? screwPattern.minMinorDiameter
         : ""
       : "";
-    this.maxMinorDiameter = screwpattern
-      ? screwpattern.maxMinorDiameter
-        ? screwpattern.maxMinorDiameter
+    this.maxMinorDiameter = screwPattern
+      ? screwPattern.maxMinorDiameter
+        ? screwPattern.maxMinorDiameter
         : ""
       : "";
-    this.minMajorDiameter = screwpattern
-      ? screwpattern.minMajorDiameter
-        ? screwpattern.minMajorDiameter
+    this.minMajorDiameter = screwPattern
+      ? screwPattern.minMajorDiameter
+        ? screwPattern.minMajorDiameter
         : ""
       : "";
-    this.maxMajorDiameter = screwpattern
-      ? screwpattern.maxMajorDiameter
-        ? screwpattern.maxMajorDiameter
+    this.maxMajorDiameter = screwPattern
+      ? screwPattern.maxMajorDiameter
+        ? screwPattern.maxMajorDiameter
         : ""
       : "";
   }
@@ -47,6 +47,10 @@ export class HeadMotor {
   internalHeadHeight;
   externalHeadHeight;
   screwPattern;
+  workPressure;
+  internalRadius;
+  thickness;
+  materialId;
 
   constructor(headMotor) {
     this.screwHeight = headMotor
@@ -69,6 +73,26 @@ export class HeadMotor {
         ? headMotor.screwPattern
         : new ScrewPattern()
       : new ScrewPattern();
+    this.workPressure = headMotor
+      ? headMotor.workPressure
+        ? headMotor.workPressure
+        : ""
+      : "";
+    this.internalRadius = headMotor
+      ? headMotor.internalRadius
+        ? headMotor.internalRadius
+        : ""
+      : "";
+    this.thickness = headMotor
+      ? headMotor.thickness
+        ? headMotor.thickness
+        : ""
+      : "";
+    this.materialId = headMotor
+      ? headMotor.materialId
+        ? headMotor.materialId
+        : ""
+      : "";
   }
 }
 export const HeadMotorActionsType = {

@@ -19,10 +19,10 @@ import { isNilOrEmpty } from "ramda-adjunct";
 
 import * as headMotorActions from "../../store/HeadMotor/HeadMotorActions";
 import { ScrewPattern } from "../../store/HeadMotor/HeadMotorTypes";
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      paddingRight: "8px",
       "& .MuiTextField-root": {
         width: 130,
         color: "white",
@@ -73,6 +73,10 @@ const useStyles = makeStyles((theme) =>
       paddingTop: "10px",
       paddingLeft: "15px",
     },
+    form: {
+      display: "flex",
+      justifyContent: "space-evenly",
+    },
   })
 );
 
@@ -89,6 +93,8 @@ const HeadMotor = (props) => {
     motorChainButtonIsDisabled,
     motorThickness,
     motorInternalRadius,
+    motorWorkPressure,
+    motorMaterialId,
     setPossibleScrewPatterns,
     screwPatternsByDiameter,
     setCreatedScrewPitch,
@@ -189,6 +195,14 @@ const HeadMotor = (props) => {
         ? [new ScrewPattern()]
         : possibleScrewPatterns;
     setPossibleScrewPatterns(possibleScrewPatterns);
+  };
+
+  const HandleHeadMotorCalculation = () => {
+    headMotor.workPressure = motorWorkPressure;
+    headMotor.internalRadius = motorInternalRadius;
+    headMotor.thickness = motorThickness;
+    headMotor.materialId = motorMaterialId;
+    calculateScrewMaxStress(headMotor);
   };
   // if (motorChainButtonIsDisabled) return null;
   return (
@@ -350,7 +364,7 @@ const HeadMotor = (props) => {
               variant="contained"
               color="primary"
               disabled={buttonIsDisabled}
-              onClick={() => calculateScrewMaxStress(headMotor)}
+              onClick={() => HandleHeadMotorCalculation()}
             >
               Calculate
             </Button>
@@ -368,6 +382,8 @@ const mapStateToProps = (state) => ({
   motorChainButtonIsDisabled: state.motorChain.buttonIsDisabled,
   motorThickness: state.motorChain.motorChain.thickness,
   motorInternalRadius: state.motorChain.motorChain.internalRadius,
+  motorWorkPressure: state.motorChain.motorChain.workPressure,
+  motorMaterialId: state.motorChain.motorChain.materialId,
 });
 
 const mapDispatchToProps = (dispatch) => {

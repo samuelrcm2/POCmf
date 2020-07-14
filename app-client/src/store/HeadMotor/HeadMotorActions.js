@@ -20,7 +20,7 @@ export const getScrewPatternsByDiameter = (diameters) => {
 
 export const calculateScrewMaxStress = (headMotor) => {
   return (dispatch) => {
-    api.get("/headMotor/", headMotor).then((response) => {
+    api.post("/headMotor/maxScrewStress/", headMotor).then((response) => {
       if (response) {
         dispatch(setScrewMaxStress(response.data));
         dispatch(

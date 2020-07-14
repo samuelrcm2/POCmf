@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   screwHeight: 0,
   internalHeadHeight: 0,
   externalHeadHeight: 0,
-  maxScrewStress: null,
+  calculatedData: null,
   screwPatterns: [],
   screwPatternsByDiameter: [],
 };
@@ -42,7 +42,7 @@ const reducer = (state = INITIAL_STATE, action) => {
         headMotor: { ...state.headMotor, screwHeight: action.payload },
       };
     case HeadMotorActionsType.SCREW_MAX_STRESS:
-      return { ...state, maxScrewStress: action.payload };
+      return { ...state, calculatedData: action.payload };
     case HeadMotorActionsType.CREATED_PITCH_SCREW_SETTED:
       return {
         ...state,

@@ -18,6 +18,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  background-color: lightgray;
 }
 
 /* use viewport-relative units to cover page fully */
@@ -40,3 +41,7 @@ body {
   color: white;
   border-color: white;
 } */
+
+.MuiPaper-root {
+  padding: 10px;
+}

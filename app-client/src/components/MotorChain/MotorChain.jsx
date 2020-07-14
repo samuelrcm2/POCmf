@@ -19,10 +19,7 @@ import Paper from "@material-ui/core/Paper";
 import { isNilOrEmpty } from "ramda-adjunct";
 
 import * as motorChainActions from "../../store/motorChain/motorChainActions";
-import {
-  CalculationTypes,
-  nameTranslations,
-} from "../../store/motorChain/motorChainTypes";
+import { CalculationTypes } from "../../store/motorChain/motorChainTypes";
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
@@ -78,10 +75,6 @@ const useStyles = makeStyles((theme) =>
 );
 
 function MotorChainInfo(props) {
-  useEffect(() => {
-    props.getAllMaterials();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const {
     motorChain,
     materials,
@@ -100,6 +93,10 @@ function MotorChainInfo(props) {
     buttonIsDisabled,
     setButtonState,
   } = props;
+  useEffect(() => {
+    props.getAllMaterials();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     checkIfHasData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,22 +167,6 @@ function MotorChainInfo(props) {
   };
   const SetButtonState = (newState) => {
     if (newState !== buttonIsDisabled) setButtonState();
-  };
-  const displayCalculatedData = () => {
-    let responses = [];
-    for (let [Key, value] of Object.entries(calculatedData)) {
-      if (value != null)
-        responses.push(
-          <li key={value}>{`${nameTranslations[Key]}: ${parseFloat(
-            value.toFixed(3)
-          )} \n`}</li>
-        );
-    }
-    return isNilOrEmpty(responses) ? null : (
-      <Paper className={classes.resultPaper}>
-        <ul>{responses}</ul>
-      </Paper>
-    );
   };
   const checkIfMotorNeedRadiusStressField = () => {
     if (calculationType === CalculationTypes.THICKNESS) return true;
@@ -370,8 +351,6 @@ function MotorChainInfo(props) {
           </span>
         </Tooltip>
       </div>
-
-      <div className={classes.result}>{displayCalculatedData()}</div>
     </div>
   );
 }

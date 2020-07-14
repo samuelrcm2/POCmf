@@ -1,9 +1,9 @@
 import React from "react";
 import { Provider } from "react-redux";
-
 import SideBar from "./components/SideBar/SideBar";
 import MotorChainComponent from "./components/MotorChain/MotorChain";
 import HeadMotorComponent from "./components/HeadMotor/HeadMotor";
+import CalculatedDataComponent from "./components/CalculatedData/CalculatedData";
 import MotorView from "./components/MotorView/MotorView";
 import { MotorChain } from "./store/motorChain/motorChainTypes";
 import store from "./store/store";
@@ -35,6 +35,7 @@ const App = () => (
             <Grid item xs={6}>
               <MotorChainComponent motorChain={new MotorChain()} />
               <HeadMotorComponent />
+              <CalculatedDataComponent />
             </Grid>
           </Grid>
           <GenericAlert />

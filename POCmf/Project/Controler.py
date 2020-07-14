@@ -63,7 +63,7 @@ class ScrewPatternByDiameter(Resource):
         return screwPatterns, 200
 
 class HeadMotor(Resource):
-    def get(self):
+    def post(self):
         data = request.get_json()
         newHeadMotor = HeadChainDomain.defineScrewBySelectedScrew(data)
         return newHeadMotor, 200
@@ -73,7 +73,7 @@ api.add_resource(AllMaterials, '/materials/getAllMaterials')
 api.add_resource(MaterialsById, '/materials/getMaterialById/<int:Id>')
 api.add_resource(AllScrewPatterns, '/screwPatterns/')
 api.add_resource(ScrewPatternByDiameter, '/screwPatterns/getByDiamter/')
-api.add_resource(HeadMotor, '/headMotor/')
+api.add_resource(HeadMotor, '/headMotor/maxScrewStress/')
 
 if __name__ == "__main__" :
     app.run(port=5000, Debug=True)
