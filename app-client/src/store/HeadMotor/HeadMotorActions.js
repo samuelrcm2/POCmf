@@ -1,6 +1,7 @@
 import api from "../../Services/api";
 import { HeadMotorActionsType } from "./HeadMotorTypes";
 import { changeGenericAlert } from "../Alert/alertActions";
+import store from "../store";
 
 export const getAllScrewPatterns = () => {
   return (dispatch) => {
@@ -46,10 +47,13 @@ export const setPossibleScrewPatterns = (screwPatterns) => {
   };
 };
 
-export const setSelectedScrew = (screwPattern) => {
+export const setSelectedScrew = (screwPatternId) => {
+  const selectedScrew = store
+    .getState()
+    .headMotor.screwPatterns.find((s) => s.id === screwPatternId);
   return {
     type: HeadMotorActionsType.SELECT_SCREW_PATTERN_SETTED,
-    payload: screwPattern,
+    payload: selectedScrew,
   };
 };
 
@@ -63,14 +67,14 @@ export const setExternalHeight = (value) => {
 export const setInternalHeight = (value) => {
   return {
     type: HeadMotorActionsType.INTERNAL_HEIGHT_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 
 export const setScrewHeight = (value) => {
   return {
     type: HeadMotorActionsType.SCREW_HEIGHT_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 
@@ -91,7 +95,7 @@ const setScrewMaxStress = (value) => {
 export const setCreatedScrewPitch = (value) => {
   return {
     type: HeadMotorActionsType.CREATED_PITCH_SCREW_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 
@@ -112,28 +116,28 @@ export const setInternalMinorRadius = (value) => {
 export const setCreatedScrewMinMinorDiameter = (value) => {
   return {
     type: HeadMotorActionsType.CREATED_MIN_MINOR_DIAMETER_SCREW_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 
 export const setCreatedScrewMaxMinorDiameter = (value) => {
   return {
     type: HeadMotorActionsType.CREATED_MAX_MINOR_DIAMETER_SCREW_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 
 export const setCreatedScrewMinMajorDiameter = (value) => {
   return {
     type: HeadMotorActionsType.CREATED_MIN_MAJOR_DIAMETER_SCREW_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 
 export const setCreatedScrewMaxMajorDiameter = (value) => {
   return {
     type: HeadMotorActionsType.CREATED_MAX_MAJOR_DIAMETER_SCREW_SETTED,
-    payload: value,
+    payload: Number(value),
   };
 };
 

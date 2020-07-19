@@ -102,7 +102,6 @@ const HeadMotor = (props) => {
     setCreatedScrewMinMajorDiameter,
     setCreatedScrewMaxMajorDiameter,
     setAfterScrewHeight,
-    setThickness,
     setInternalRadius,
     setInternalMinorRadius,
   } = props;
@@ -125,7 +124,7 @@ const HeadMotor = (props) => {
   useEffect(() => {
     DefinePossibleScrewPatterns();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [motorThickness, motorInternalRadius]);
+  }, [motorThickness, motorInternalRadius, screwPatterns]);
 
   const checkIfHasData = () => {
     if (isNilOrEmpty(headMotor.screwHeight)) {
@@ -160,12 +159,6 @@ const HeadMotor = (props) => {
 
     if (isNilOrEmpty(headMotor.internalMinorRadius)) {
       setMessageError("Please, insert a Minor Internal Radius.");
-      setButtonState(true);
-      return;
-    }
-
-    if (isNilOrEmpty(headMotor.thickness)) {
-      setMessageError("Please, insert a Thickness.");
       setButtonState(true);
       return;
     }
@@ -213,11 +206,13 @@ const HeadMotor = (props) => {
   };
 
   const DefinePossibleScrewPatterns = () => {
+    if (!motorThickness || !motorInternalRadius) return;
     let externalRadius = motorThickness + motorInternalRadius;
     let possibleScrewPatterns = screwPatterns.filter(
       (s) =>
-        s.minMinorDiameter >= motorInternalRadius &&
-        s.maxMajorDiameter <= externalRadius
+        s.maxMinorDiameter <= motorInternalRadius * 2 &&
+        s.minMajorDiameter >= motorInternalRadius * 2 &&
+        s.maxMajorDiameter <= externalRadius * 2
     );
     possibleScrewPatterns =
       possibleScrewPatterns.length === 0
@@ -332,14 +327,11 @@ const HeadMotor = (props) => {
               <Select
                 labelId="screw-type-select-label"
                 id="screw-type-select"
-                value={headMotor.screwPattern}
+                value={headMotor.screwPattern.id}
                 onChange={(ev) => setSelectedScrew(ev.target.value)}
               >
-                <MenuItem key={0} value={0}>
-                  {""}
-                </MenuItem>
                 {screwPatternsByDiameter.map((screwPattern) => (
-                  <MenuItem key={screwPattern.id} value={screwPattern}>
+                  <MenuItem key={screwPattern.id} value={screwPattern.id}>
                     {screwPattern.name}
                   </MenuItem>
                 ))}
@@ -349,7 +341,7 @@ const HeadMotor = (props) => {
 
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="screwHeight"
+            id="hm-screw-height"
             onChange={(ev) => setScrewHeight(ev.target.value)}
             label="Screw Height (mm)"
             type="number"
@@ -361,7 +353,7 @@ const HeadMotor = (props) => {
 
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="internal-height"
+            id="hm-internal-height"
             onChange={(ev) => setInternalHeight(ev.target.value)}
             label="Internal Height (mm)"
             type="number"
@@ -375,7 +367,7 @@ const HeadMotor = (props) => {
 
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="internal-height"
+            id="hm-after-screw-height"
             onChange={(ev) => setAfterScrewHeight(ev.target.value)}
             label="After Screw Height (mm)"
             type="number"
@@ -389,7 +381,7 @@ const HeadMotor = (props) => {
 
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="motor-chain-thickness"
+            id="hm-external-height"
             onChange={(ev) => setExternalHeight(ev.target.value)}
             label="External Height (mm)"
             type="number"
@@ -401,7 +393,7 @@ const HeadMotor = (props) => {
 
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="mn-internal-major-radius"
+            id="hm-internal-major-radius"
             onChange={(ev) => setInternalRadius(ev.target.value)}
             label="Internal Major Radius (mm)"
             type="number"
@@ -412,23 +404,11 @@ const HeadMotor = (props) => {
           />
           <TextField
             className={clsx(classes.textField, classes.margin)}
-            id="mn-internal-minor-radius"
+            id="hm-internal-minor-radius"
             onChange={(ev) => setInternalMinorRadius(ev.target.value)}
             label="Internal Minor Radius (mm)"
             type="number"
             defaultValue={headMotor.internalMinorRadius}
-            InputProps={{
-              className: classes.input,
-            }}
-          />
-
-          <TextField
-            className={clsx(classes.textField, classes.margin)}
-            id="mn-thickness"
-            onChange={(ev) => setThickness(ev.target.value)}
-            label="Thickness (mm)"
-            type="number"
-            defaultValue={headMotor.thickness}
             InputProps={{
               className: classes.input,
             }}

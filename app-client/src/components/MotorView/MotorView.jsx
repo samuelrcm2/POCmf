@@ -23,60 +23,66 @@ const useStyles = (theme) => ({
 });
 class MotorView extends Component {
   checkIfHasData = () => {
-    if (isNilOrEmpty(this.props.calculationType)) return false;
+    if (this.isValueValid(this.props.calculationType)) return false;
 
-    if (isNilOrEmpty(this.props.motorChain.internalRadius)) return false;
+    if (this.isValueValid(this.props.motorChain.internalRadius)) return false;
 
-    if (isNilOrEmpty(this.props.motorChain.height)) return false;
-
-    if (isNilOrEmpty(this.props.motorChain.workPressure)) return false;
+    if (this.isValueValid(this.props.motorChain.height)) return false;
 
     if (
       this.props.calculationType !== CalculationTypes.THICKNESS &&
-      isNilOrEmpty(this.props.motorChain.thickness)
+      this.isValueValid(this.props.motorChain.thickness)
     )
       return false;
 
     if (this.props.calculationType !== CalculationTypes.MAIN_STRESSES) {
       if (
-        isNilOrEmpty(this.props.motorChain.longitudinalStress) ||
-        isNilOrEmpty(this.props.motorChain.circumferentialStress)
+        this.isValueValid(this.props.motorChain.longitudinalStress) ||
+        this.isValueValid(this.props.motorChain.circumferentialStress)
       )
         return false;
 
       if (
         this.checkIfMotorNeedRadiusStressField() &&
-        isNilOrEmpty(this.props.motorChain.radialStress)
+        this.isValueValid(this.props.motorChain.radialStress)
       )
         return false;
     }
 
-    if (isNilOrEmpty(this.props.headMotor.screwHeight)) return false;
+    if (this.isValueValid(this.props.headMotor.screwHeight)) return false;
 
-    if (isNilOrEmpty(this.props.headMotor.internalHeadHeight)) return false;
+    if (this.isValueValid(this.props.headMotor.internalHeadHeight))
+      return false;
 
-    if (isNilOrEmpty(this.props.headMotor.externalHeadHeight)) return false;
+    if (this.isValueValid(this.props.headMotor.externalHeadHeight))
+      return false;
 
-    if (isNilOrEmpty(this.props.headMotor.afterScrewHeight)) return false;
+    if (this.isNilOrEmpty(this.props.headMotor.afterScrewHeight)) return false;
 
-    if (isNilOrEmpty(this.props.headMotor.internalRadius)) return false;
+    if (this.isValueValid(this.props.headMotor.internalRadius)) return false;
 
-    if (isNilOrEmpty(this.props.headMotor.internalMinorRadius)) return false;
+    if (this.isValueValid(this.props.headMotor.internalMinorRadius))
+      return false;
 
-    if (isNilOrEmpty(this.props.headMotor.thickness)) return false;
+    if (this.isNilOrEmpty(this.props.motorNozzle.afterScrewHeight))
+      return false;
 
-    if (isNilOrEmpty(this.props.motorNozzle.screwHeight)) return false;
+    if (this.isValueValid(this.props.motorNozzle.screwHeight)) return false;
 
-    if (isNilOrEmpty(this.props.motorNozzle.internalHeight)) return false;
+    if (this.isValueValid(this.props.motorNozzle.internalHeight)) return false;
 
-    if (isNilOrEmpty(this.props.motorNozzle.externalHeight)) return false;
+    if (this.isValueValid(this.props.motorNozzle.externalHeight)) return false;
 
-    if (isNilOrEmpty(this.props.motorNozzle.internalMajorRadius)) return false;
+    if (this.isValueValid(this.props.motorNozzle.internalMajorRadius))
+      return false;
 
-    if (isNilOrEmpty(this.props.motorNozzle.internalMinorRadius)) return false;
+    if (this.isValueValid(this.props.motorNozzle.internalMinorRadius))
+      return false;
 
     return true;
   };
+
+  isValueValid = (value) => isNilOrEmpty(value) || value === 0;
 
   checkIfMotorNeedRadiusStressField = () => {
     if (this.props.calculationType === CalculationTypes.THICKNESS) return true;
@@ -98,11 +104,13 @@ class MotorView extends Component {
   };
 
   createMotorDraw = () => {
-    console.log("chamei a função");
-    if (!this.checkIfHasData()) return;
+    if (!this.checkIfHasData()) {
+      d3.select(".svg-container").remove();
+      return;
+    }
     //Ainda não definido dinamicamente no projeto
-    const SEALING_RING_THICKNESS = 5;
-    const SEALING_RING_RADIUS_DIFFERENCE = 5;
+    const SEALING_RING_THICKNESS = 2;
+    const SEALING_RING_RADIUS_DIFFERENCE = 2;
 
     const MAX_WIDTH = 500;
     const MAX_HEIGHT = 500;
@@ -116,22 +124,42 @@ class MotorView extends Component {
     const MAX_Y =
       MIN_Y +
       this.props.motorChain.height +
-      this.props.headMotor.screwHeight +
       this.props.headMotor.internalHeadHeight +
       this.props.headMotor.externalHeadHeight +
       this.props.motorNozzle.externalHeight +
       this.props.motorNozzle.internalHeight;
+    const scaleFactor = (MAX_HEIGHT - 2 * MIN_Y) / (MAX_Y + MIN_Y);
+    const xOffset = (MAX_WIDTH - scaleFactor * (MAX_X + MIN_X)) / 2;
+
+    const HEAD_MOTOR_MINIMUM_THICKNESS =
+      this.props.motorChain.thickness +
+      this.props.motorChain.internalRadius -
+      this.props.headMotor.internalRadius;
+    const MOTOR_NOZZLE_MINIMUM_THICKNESS =
+      this.props.motorChain.thickness +
+      this.props.motorChain.internalRadius -
+      this.props.motorNozzle.internalMajorRadius;
+
     const EXTERNAL_HEAD_HEIGHT =
       MIN_Y + this.props.headMotor.externalHeadHeight;
+    const HEAD_MOTOR_RING_EXTERNAL_LEFT_X =
+      MIN_X + HEAD_MOTOR_MINIMUM_THICKNESS;
+    const HEAD_MOTOR_RING_INTERNAL_LEFT_X =
+      MIN_X + HEAD_MOTOR_MINIMUM_THICKNESS + SEALING_RING_RADIUS_DIFFERENCE;
+    const HEAD_MOTOR_RING_EXTERNAL_RIGHT_X =
+      MAX_X - HEAD_MOTOR_MINIMUM_THICKNESS;
+    const HEAD_MOTOR_RING_INTERNAL_RIGHT_X =
+      MAX_X - (HEAD_MOTOR_MINIMUM_THICKNESS + SEALING_RING_RADIUS_DIFFERENCE);
 
-    const RING_EXTERNAL_RIGHT_X = MIN_X + this.props.headMotor.thickness;
-    const RING_INTERNAL_RIGHT_X =
-      MIN_X + this.props.headMotor.thickness + SEALING_RING_RADIUS_DIFFERENCE;
-    const RING_EXTERNAL_LEFT_X = MAX_X - this.props.headMotor.thickness;
-    const RING_INTERNAL_LEFT_X =
-      MAX_X - (this.props.headMotor.thickness + SEALING_RING_RADIUS_DIFFERENCE);
+    const MOTOR_NOZZLE_RING_EXTERNAL_LEFT_X =
+      MIN_X + MOTOR_NOZZLE_MINIMUM_THICKNESS;
+    const MOTOR_NOZZLE_RING_INTERNAL_LEFT_X =
+      MIN_X + MOTOR_NOZZLE_MINIMUM_THICKNESS + SEALING_RING_RADIUS_DIFFERENCE;
+    const MOTOR_NOZZLE_RING_EXTERNAL_RIGHT_X =
+      MAX_X - MOTOR_NOZZLE_MINIMUM_THICKNESS;
+    const MOTOR_NOZZLE_RING_INTERNAL_RIGHT_X =
+      MAX_X - (MOTOR_NOZZLE_MINIMUM_THICKNESS + SEALING_RING_RADIUS_DIFFERENCE);
 
-    const RING_SUPERIOR_UP_Y = MIN_Y + this.props.headMotor.externalHeadHeight;
     const RING_SUPERIOR_DOWN_Y =
       MIN_Y + this.props.headMotor.externalHeadHeight + SEALING_RING_THICKNESS;
     const RING_INFERIOR_UP_Y =
@@ -140,38 +168,40 @@ class MotorView extends Component {
 
     const MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT =
       MIN_X +
-      this.props.headMotor.thickness +
-      this.props.headMotor.internalRadius -
+      this.props.motorChain.thickness +
+      this.props.motorChain.internalRadius -
       this.props.headMotor.internalMinorRadius;
     const MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT =
       MIN_X +
-      this.props.headMotor.thickness +
-      this.props.headMotor.internalRadius +
+      this.props.motorChain.thickness +
+      this.props.motorChain.internalRadius +
       this.props.headMotor.internalMinorRadius;
     const MOTOR_HEAD_MAXIMUM_HEIGHT =
       MIN_Y +
       this.props.headMotor.externalHeadHeight +
-      this.props.headMotor.internalHeadHeight +
-      this.props.headMotor.screwHeight +
-      this.props.headMotor.afterScrewHeight;
+      this.props.headMotor.internalHeadHeight;
+
+    const MOTOR_HEAD_INTERNAL_INICIAL_HEIGHT =
+      MOTOR_HEAD_MAXIMUM_HEIGHT -
+      (this.props.headMotor.afterScrewHeight +
+        this.props.headMotor.screwHeight);
 
     const NOZZLE_INTERNAL_MINIMUM_RADIUS_LEFT =
       MIN_X +
-      this.props.motorNozzle.thickness +
-      this.props.motorNozzle.internalMajorRadius -
+      this.props.motorChain.thickness +
+      this.props.motorChain.internalRadius -
       this.props.motorNozzle.internalMinorRadius;
     const NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT =
       MIN_X +
-      this.props.motorNozzle.thickness +
-      this.props.motorNozzle.internalMajorRadius +
+      this.props.motorChain.thickness +
+      this.props.motorChain.internalRadius +
       this.props.motorNozzle.internalMinorRadius;
     const NOZZLE_MAXIMUM_HEIGHT =
-      MIN_Y -
+      MAX_Y -
       (this.props.motorNozzle.externalHeight +
-        this.props.motorNozzle.internalHeight +
-        this.props.motorNozzle.screwHeight +
-        this.props.motorNozzle.afterScrewHeight);
-
+        this.props.motorNozzle.internalHeight);
+    const NOZZLE_FINAL_MINIMUM_RADIUS_HEIGHT =
+      NOZZLE_MAXIMUM_HEIGHT + this.props.motorNozzle.afterScrewHeight;
     const MOTOR_CHAIN_LEFT_X = MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT;
     const MOTOR_CHAIN_RIGHT_X = MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT;
     const MOTOR_CHAIN_TOP_Y = MOTOR_HEAD_MAXIMUM_HEIGHT;
@@ -185,253 +215,557 @@ class MotorView extends Component {
       { x: MAX_X, y: MIN_Y },
       { x: MIN_X, y: MIN_Y },
       //Tampos
-      { x: MIN_X, y: EXTERNAL_HEAD_HEIGHT },
+      {
+        x: MIN_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
       //Anel de vedação superior
-      { x: RING_INTERNAL_RIGHT_X, y: EXTERNAL_HEAD_HEIGHT },
-      { x: RING_INTERNAL_RIGHT_X, y: RING_SUPERIOR_DOWN_Y },
-      { x: RING_EXTERNAL_RIGHT_X, y: RING_SUPERIOR_DOWN_Y },
-      { x: RING_EXTERNAL_RIGHT_X, y: EXTERNAL_HEAD_HEIGHT },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_LEFT_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_LEFT_X,
+        y: RING_SUPERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_LEFT_X,
+        y: RING_SUPERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_LEFT_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
     ];
 
     let nozzleHead = [
       //Anel de vedação inferior
-      { x: RING_EXTERNAL_RIGHT_X, y: RING_INFERIOR_DOWN_Y },
-      { x: RING_EXTERNAL_RIGHT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_INTERNAL_RIGHT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_INTERNAL_RIGHT_X, y: RING_INFERIOR_DOWN_Y },
+      {
+        x: MOTOR_NOZZLE_RING_EXTERNAL_LEFT_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
+      {
+        x: MOTOR_NOZZLE_RING_EXTERNAL_LEFT_X,
+        y: RING_INFERIOR_UP_Y,
+      },
+      {
+        x: MOTOR_NOZZLE_RING_INTERNAL_LEFT_X,
+        y: RING_INFERIOR_UP_Y,
+      },
+      {
+        x: MOTOR_NOZZLE_RING_INTERNAL_LEFT_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
 
-      { x: MIN_X, y: RING_INFERIOR_DOWN_Y },
-      { x: MAX_X, y: RING_INFERIOR_DOWN_Y },
+      {
+        x: MIN_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
+      {
+        x: MAX_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
       //Anel de vedação inferior
-      { x: RING_INTERNAL_LEFT_X, y: RING_INFERIOR_DOWN_Y },
-      { x: RING_INTERNAL_LEFT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_INFERIOR_DOWN_Y },
+      {
+        x: MOTOR_NOZZLE_RING_INTERNAL_RIGHT_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
+      {
+        x: MOTOR_NOZZLE_RING_INTERNAL_RIGHT_X,
+        y: RING_INFERIOR_UP_Y,
+      },
+      {
+        x: MOTOR_NOZZLE_RING_EXTERNAL_RIGHT_X,
+        y: RING_INFERIOR_UP_Y,
+      },
+      {
+        x: MOTOR_NOZZLE_RING_EXTERNAL_RIGHT_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
     ];
 
     let headHead = [
-      { x: RING_EXTERNAL_LEFT_X, y: EXTERNAL_HEAD_HEIGHT },
+      {
+        x: MOTOR_NOZZLE_RING_EXTERNAL_RIGHT_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
       //Anel de vedação superior
-      { x: RING_EXTERNAL_LEFT_X, y: RING_SUPERIOR_DOWN_Y },
-      { x: RING_INTERNAL_LEFT_X, y: RING_SUPERIOR_DOWN_Y },
-      { x: RING_INTERNAL_LEFT_X, y: EXTERNAL_HEAD_HEIGHT },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_RIGHT_X,
+        y: RING_SUPERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_RIGHT_X,
+        y: RING_SUPERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_RIGHT_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
 
-      { x: MAX_X, y: EXTERNAL_HEAD_HEIGHT },
+      {
+        x: MAX_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
       //Linhas internas
-      { x: RING_INTERNAL_RIGHT_X, y: EXTERNAL_HEAD_HEIGHT },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_LEFT_X,
+        y: EXTERNAL_HEAD_HEIGHT,
+      },
     ];
 
     let headMotorInternalLines = [
-      { x: RING_INTERNAL_LEFT_X, y: RING_INFERIOR_DOWN_Y },
-      { x: RING_INTERNAL_LEFT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_INFERIOR_DOWN_Y },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_RIGHT_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_RIGHT_X,
+        y: RING_INFERIOR_UP_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_RIGHT_X,
+        y: RING_INFERIOR_UP_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_RIGHT_X,
+        y: RING_INFERIOR_DOWN_Y,
+      },
     ];
 
-    let internalMotorHeadLines = [
-      { x: RING_INTERNAL_RIGHT_X, y: RING_SUPERIOR_DOWN_Y },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_SUPERIOR_DOWN_Y },
-      // { x: RING_EXTERNAL_LEFT_X, y: 60 },
-      // { x: 73, y: 61 },
-      // { x: 73, y: 61.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 62.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 62.75 },
-      // { x: 73, y: 63.75 },
-      // { x: 73, y: 64.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 65.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 65.5 },
-      // { x: 73, y: 66.5 },
-      // { x: 73, y: 67 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 68 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 68.25 },
-      // { x: 73, y: 69.25 },
-      // { x: 73, y: 69.75 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 70.75 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 71 },
-      // { x: 73, y: 72 },
-      // { x: 73, y: 72.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 73.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 73.75 },
-      // { x: 73, y: 74.75 },
-      // { x: 73, y: 75.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 76.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 76.5 },
-      // { x: 73, y: 77.5 },
-      // { x: 73, y: 78 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 79 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 79.25 },
-      // { x: 73, y: 80.25 },
-      // { x: 73, y: 80.75 },
-      // { x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT, y: 80.75 },
+    let headMotorLeftScrewLines = [
       {
-        x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT,
-        y: MOTOR_HEAD_MAXIMUM_HEIGHT,
+        x: HEAD_MOTOR_RING_EXTERNAL_LEFT_X,
+        y: RING_SUPERIOR_DOWN_Y,
       },
-
       {
-        x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT,
-        y: MOTOR_HEAD_MAXIMUM_HEIGHT,
+        x: HEAD_MOTOR_RING_EXTERNAL_LEFT_X,
+        y: MOTOR_HEAD_INTERNAL_INICIAL_HEIGHT,
       },
-      // { x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT, y: 80.75 },
-      // { x: 12, y: 80.75 },
-      // { x: 12, y: 80.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 79.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 79 },
-      // { x: 12, y: 78 },
-      // { x: 12, y: 77.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 76.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 76.25 },
-      // { x: 12, y: 75.25 },
-      // { x: 12, y: 74.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 73.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 73.5 },
-      // { x: 12, y: 72.5 },
-      // { x: 12, y: 72 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 71 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 70.75 },
-      // { x: 12, y: 69.75 },
-      // { x: 12, y: 69.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 68.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 68 },
-      // { x: 12, y: 67 },
-      // { x: 12, y: 66.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 65.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 65.25 },
-      // { x: 12, y: 64.25 },
-      // { x: 12, y: 63.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 62.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 62.5 },
-      // { x: 12, y: 61.5 },
-      // { x: 12, y: 61 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 60 },
-      { x: RING_EXTERNAL_RIGHT_X, y: RING_SUPERIOR_DOWN_Y },
     ];
+    const hmScrewCoordenatePointsLeft = this.hmCreateScrewCoordenatesLeftSide(
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_LEFT_X,
+        y: MOTOR_HEAD_INTERNAL_INICIAL_HEIGHT,
+      },
+      this.props.headMotor
+    );
+    hmScrewCoordenatePointsLeft.forEach((c) => headMotorLeftScrewLines.push(c));
+    headMotorLeftScrewLines.push({
+      x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT,
+      y: MOTOR_HEAD_MAXIMUM_HEIGHT,
+    });
+
+    let headMotorRightScrewLines = [
+      {
+        x: HEAD_MOTOR_RING_INTERNAL_LEFT_X,
+        y: RING_SUPERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_RIGHT_X,
+        y: RING_SUPERIOR_DOWN_Y,
+      },
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_RIGHT_X,
+        y: MOTOR_HEAD_INTERNAL_INICIAL_HEIGHT,
+      },
+    ];
+    const hmScrewCoordenatePoints = this.hmCreateScrewCoordenatesRightSide(
+      {
+        x: HEAD_MOTOR_RING_EXTERNAL_RIGHT_X,
+        y: MOTOR_HEAD_INTERNAL_INICIAL_HEIGHT,
+      },
+      this.props.headMotor
+    );
+    hmScrewCoordenatePoints.forEach((c) => headMotorRightScrewLines.push(c));
+    headMotorRightScrewLines.push({
+      x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT,
+      y: MOTOR_HEAD_MAXIMUM_HEIGHT,
+    });
+    headMotorRightScrewLines.push({
+      x: MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT,
+      y: MOTOR_HEAD_MAXIMUM_HEIGHT,
+    });
 
     let motorChain = [
-      { x: MOTOR_CHAIN_RIGHT_X, y: MOTOR_CHAIN_TOP_Y },
-      { x: MOTOR_CHAIN_LEFT_X, y: MOTOR_CHAIN_TOP_Y },
-      { x: MOTOR_CHAIN_LEFT_X, y: MOTOR_CHAIN_BOTTOM_Y },
-      { x: MOTOR_CHAIN_RIGHT_X, y: MOTOR_CHAIN_BOTTOM_Y },
-      { x: MOTOR_CHAIN_RIGHT_X, y: MOTOR_CHAIN_TOP_Y },
+      {
+        x: MOTOR_CHAIN_RIGHT_X,
+        y: MOTOR_CHAIN_TOP_Y,
+      },
+      {
+        x: MOTOR_CHAIN_LEFT_X,
+        y: MOTOR_CHAIN_TOP_Y,
+      },
+      {
+        x: MOTOR_CHAIN_LEFT_X,
+        y: MOTOR_CHAIN_BOTTOM_Y,
+      },
+      {
+        x: MOTOR_CHAIN_RIGHT_X,
+        y: MOTOR_CHAIN_BOTTOM_Y,
+      },
+      {
+        x: MOTOR_CHAIN_RIGHT_X,
+        y: MOTOR_CHAIN_TOP_Y,
+      },
     ];
 
     let internalNozzleLeft = [
-      { x: NOZZLE_INTERNAL_MINIMUM_RADIUS_LEFT, y: NOZZLE_MAXIMUM_HEIGHT },
-      // { x: NOZZLE_INTERNAL_MINIMUM_RADIUS_LEFT, y: 353.5 },
-
-      // { x: 12, y: 353.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 354.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 354.75 },
-      // { x: 12, y: 355.75 },
-      // { x: 12, y: 356.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 357.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 357.5 },
-      // { x: 12, y: 358.5 },
-      // { x: 12, y: 359 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 360 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 360.25 },
-      // { x: 12, y: 361.25 },
-      // { x: 12, y: 361.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 362.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 363 },
-      // { x: 12, y: 364 },
-      // { x: 12, y: 364.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 365.5 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 365.75 },
-      // { x: 12, y: 366.75 },
-      // { x: 12, y: 367.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 368.25 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 368.5 },
-      // { x: 12, y: 369.5 },
-      // { x: 12, y: 370 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 371 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 371.25 },
-      // { x: 12, y: 372.25 },
-      // { x: 12, y: 372.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 373.75 },
-      // { x: RING_EXTERNAL_RIGHT_X, y: 374 },
-      { x: RING_EXTERNAL_RIGHT_X, y: RING_INFERIOR_UP_Y },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_INFERIOR_UP_Y },
+      {
+        x: NOZZLE_INTERNAL_MINIMUM_RADIUS_LEFT,
+        y: NOZZLE_MAXIMUM_HEIGHT,
+      },
+      {
+        x: NOZZLE_INTERNAL_MINIMUM_RADIUS_LEFT,
+        y: NOZZLE_FINAL_MINIMUM_RADIUS_HEIGHT,
+      },
     ];
+
+    const mnScrewLinesLeft = this.mnCreateScrewCoordenatesLeftSide(
+      {
+        x: NOZZLE_INTERNAL_MINIMUM_RADIUS_LEFT,
+        y: NOZZLE_FINAL_MINIMUM_RADIUS_HEIGHT,
+      },
+      this.props.motorNozzle
+    );
+    mnScrewLinesLeft.forEach((c) => internalNozzleLeft.push(c));
+    internalNozzleLeft.push({
+      x: MOTOR_NOZZLE_RING_EXTERNAL_LEFT_X,
+      y: RING_INFERIOR_UP_Y,
+    });
+    internalNozzleLeft.push({
+      x: MOTOR_NOZZLE_RING_EXTERNAL_RIGHT_X,
+      y: RING_INFERIOR_UP_Y,
+    });
 
     let internalNozzleRight = [
-      { x: NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT, y: NOZZLE_MAXIMUM_HEIGHT },
-      // { x: NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT, y: 353.5 },
-
-      // { x: 73, y: 353.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 354.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 354.75 },
-      // { x: 73, y: 355.75 },
-      // { x: 73, y: 356.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 357.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 357.5 },
-      // { x: 73, y: 358.5 },
-      // { x: 73, y: 359 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 360 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 360.25 },
-      // { x: 73, y: 361.25 },
-      // { x: 73, y: 361.75 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 362.75 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 363 },
-      // { x: 73, y: 364 },
-      // { x: 73, y: 364.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 365.5 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 365.75 },
-      // { x: 73, y: 366.75 },
-      // { x: 73, y: 367.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 368.25 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 368.5 },
-      // { x: 73, y: 369.5 },
-      // { x: 73, y: 370 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 371 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 371.25 },
-      // { x: 73, y: 372.25 },
-      // { x: 73, y: 372.75 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 373.75 },
-      // { x: RING_EXTERNAL_LEFT_X, y: 374 },
-      { x: RING_EXTERNAL_LEFT_X, y: RING_INFERIOR_UP_Y },
+      {
+        x: NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT,
+        y: NOZZLE_MAXIMUM_HEIGHT,
+      },
+      {
+        x: NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT,
+        y: NOZZLE_FINAL_MINIMUM_RADIUS_HEIGHT,
+      },
     ];
+    const mnScrewLinesRight = this.mnCreateScrewCoordenatesRightide(
+      {
+        x: NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT,
+        y: NOZZLE_FINAL_MINIMUM_RADIUS_HEIGHT,
+      },
+      this.props.motorNozzle
+    );
+    mnScrewLinesRight.forEach((c) => internalNozzleRight.push(c));
+    internalNozzleRight.push({
+      x: MOTOR_NOZZLE_RING_EXTERNAL_RIGHT_X,
+      y: RING_INFERIOR_UP_Y,
+    });
+    let lineMotorFunction = d3
+      .line()
+      .x((d) => {
+        return d.x * scaleFactor + xOffset;
+      })
+      .y((d) => {
+        return d.y * scaleFactor;
+      })
+      .curve(d3.curveLinear);
 
     let lineFunction = d3
       .line()
       .x((d) => {
-        return d.x;
+        return d.x.toFixed(3);
       })
       .y((d) => {
-        return d.y;
+        return d.y.toFixed(3);
       })
       .curve(d3.curveLinear);
+
+    d3.select(".svg-container").remove();
+
+    d3.select("#motor-view-container")
+      .append("div")
+      .classed("svg-container", true);
+
     let svgContainer = d3
-      .select("#motor-front-view")
+      .select(".svg-container")
       .append("svg")
       .attr("width", MAX_WIDTH)
       .attr("height", MAX_HEIGHT);
+
+    svgContainer
+      .append("text")
+      .attr("x", () => MAX_WIDTH - 50)
+      .attr("y", () => MAX_HEIGHT - MIN_Y)
+      .text(() => {
+        const scaleValue = 25 / scaleFactor;
+        return `${scaleValue.toFixed(3)}mm`;
+      });
+
+    let scaleLine = [
+      { x: MAX_WIDTH - 2 * MIN_X, y: MAX_HEIGHT - 5 * MIN_Y },
+      { x: MAX_WIDTH - (2 * MIN_X + 25), y: MAX_HEIGHT - 5 * MIN_Y },
+    ];
+
+    svgContainer
+      .append("path")
+      .attr("d", lineFunction(scaleLine))
+      .attr("stroke", "black")
+      .attr("stroke-width", 1)
+      .attr("fill", "none");
 
     const DrawRocketBody = (svgContainer, pointersList) => {
       pointersList.forEach((list) => {
         svgContainer
           .append("path")
-          .attr("d", lineFunction(list))
+          .attr("d", lineMotorFunction(list))
           .attr("stroke", "black")
           .attr("stroke-width", 1)
           .attr("fill", "none");
       });
     };
+
     DrawRocketBody(svgContainer, [
       externalRectangle,
       nozzleHead,
       headHead,
       headMotorInternalLines,
-      internalMotorHeadLines,
+      headMotorLeftScrewLines,
+      headMotorRightScrewLines,
       motorChain,
       internalNozzleLeft,
       internalNozzleRight,
     ]);
   };
 
+  hmCreateScrewCoordenatesRightSide = (inicialCordenate, headMotor) => {
+    const diamtetersDifference = Number(
+      headMotor.screwPattern.minMajorDiameter -
+        headMotor.screwPattern.minMinorDiameter
+    );
+    const cogOffset = Number((headMotor.screwPattern.pitch * 5) / 16);
+    const finalXValue = Number(
+      inicialCordenate.x -
+        headMotor.internalRadius +
+        headMotor.internalMinorRadius
+    );
+    let screwCoordenates = [];
+    let coordenate = {
+      x:
+        inicialCordenate.x -
+        headMotor.internalRadius +
+        headMotor.screwPattern.minMinorDiameter / 2,
+      y: inicialCordenate.y,
+    };
+    screwCoordenates.push(coordenate);
+    while (
+      coordenate.y + headMotor.screwPattern.pitch - inicialCordenate.y <
+      headMotor.screwHeight
+    ) {
+      let firstPoint = {
+        x: coordenate.x,
+        y: coordenate.y + headMotor.screwPattern.pitch / 4,
+      };
+      screwCoordenates.push(firstPoint);
+      let secondPoint = {
+        x: firstPoint.x + diamtetersDifference,
+        y: firstPoint.y + cogOffset,
+      };
+      screwCoordenates.push(secondPoint);
+      let thridPoint = {
+        x: secondPoint.x,
+        y: secondPoint.y + headMotor.screwPattern.pitch / 8,
+      };
+      screwCoordenates.push(thridPoint);
+      let fourthPoint = {
+        x: thridPoint.x - diamtetersDifference,
+        y: thridPoint.y + cogOffset,
+      };
+      screwCoordenates.push(fourthPoint);
+      coordenate = fourthPoint;
+    }
+    screwCoordenates.push({
+      x: coordenate.x,
+      y: headMotor.screwHeight + inicialCordenate.y,
+    });
+    screwCoordenates.push({
+      x: finalXValue,
+      y: headMotor.screwHeight + inicialCordenate.y,
+    });
+    return screwCoordenates;
+  };
+
+  hmCreateScrewCoordenatesLeftSide = (inicialCordenate, headMotor) => {
+    const diamtetersDifference = Number(
+      headMotor.screwPattern.minMajorDiameter -
+        headMotor.screwPattern.minMinorDiameter
+    );
+    const cogOffset = Number((headMotor.screwPattern.pitch * 5) / 16);
+    const finalXValue = Number(
+      inicialCordenate.x +
+        headMotor.internalRadius -
+        headMotor.internalMinorRadius
+    );
+    let screwCoordenates = [];
+    let coordenate = {
+      x:
+        inicialCordenate.x +
+        headMotor.internalRadius -
+        headMotor.screwPattern.minMinorDiameter / 2,
+      y: inicialCordenate.y,
+    };
+    screwCoordenates.push(coordenate);
+    while (
+      coordenate.y + headMotor.screwPattern.pitch - inicialCordenate.y <
+      headMotor.screwHeight
+    ) {
+      let firstPoint = {
+        x: coordenate.x,
+        y: coordenate.y + headMotor.screwPattern.pitch / 4,
+      };
+      screwCoordenates.push(firstPoint);
+      let secondPoint = {
+        x: firstPoint.x - diamtetersDifference,
+        y: firstPoint.y + cogOffset,
+      };
+      screwCoordenates.push(secondPoint);
+      let thridPoint = {
+        x: secondPoint.x,
+        y: secondPoint.y + headMotor.screwPattern.pitch / 8,
+      };
+      screwCoordenates.push(thridPoint);
+      let fourthPoint = {
+        x: thridPoint.x + diamtetersDifference,
+        y: thridPoint.y + cogOffset,
+      };
+      screwCoordenates.push(fourthPoint);
+      coordenate = fourthPoint;
+    }
+    screwCoordenates.push({
+      x: coordenate.x,
+      y: headMotor.screwHeight + inicialCordenate.y,
+    });
+    screwCoordenates.push({
+      x: finalXValue,
+      y: headMotor.screwHeight + inicialCordenate.y,
+    });
+    return screwCoordenates;
+  };
+
+  mnCreateScrewCoordenatesRightide = (inicialCordenate, motorNozzle) => {
+    const diamtetersDifference = Number(
+      motorNozzle.screwPattern.minMajorDiameter -
+        motorNozzle.screwPattern.minMinorDiameter
+    );
+    const cogOffset = Number((motorNozzle.screwPattern.pitch * 5) / 16);
+    const finalXValue = Number(
+      inicialCordenate.x +
+        motorNozzle.internalMajorRadius -
+        motorNozzle.internalMinorRadius
+    );
+    let screwCoordenates = [];
+    let coordenate = {
+      x:
+        inicialCordenate.x -
+        motorNozzle.internalMinorRadius +
+        motorNozzle.screwPattern.minMinorDiameter / 2,
+      y: inicialCordenate.y,
+    };
+    screwCoordenates.push(coordenate);
+    while (
+      coordenate.y + motorNozzle.screwPattern.pitch - inicialCordenate.y <
+      motorNozzle.screwHeight
+    ) {
+      let firstPoint = {
+        x: coordenate.x,
+        y: coordenate.y + motorNozzle.screwPattern.pitch / 4,
+      };
+      screwCoordenates.push(firstPoint);
+      let secondPoint = {
+        x: firstPoint.x + diamtetersDifference,
+        y: firstPoint.y + cogOffset,
+      };
+      screwCoordenates.push(secondPoint);
+      let thridPoint = {
+        x: secondPoint.x,
+        y: secondPoint.y + motorNozzle.screwPattern.pitch / 8,
+      };
+      screwCoordenates.push(thridPoint);
+      let fourthPoint = {
+        x: thridPoint.x - diamtetersDifference,
+        y: thridPoint.y + cogOffset,
+      };
+      screwCoordenates.push(fourthPoint);
+      coordenate = fourthPoint;
+    }
+    screwCoordenates.push({
+      x: coordenate.x,
+      y: motorNozzle.screwHeight + inicialCordenate.y,
+    });
+    screwCoordenates.push({
+      x: finalXValue,
+      y: motorNozzle.screwHeight + inicialCordenate.y,
+    });
+    return screwCoordenates;
+  };
+  mnCreateScrewCoordenatesLeftSide = (inicialCordenate, motorNozzle) => {
+    const diamtetersDifference = Number(
+      motorNozzle.screwPattern.minMajorDiameter -
+        motorNozzle.screwPattern.minMinorDiameter
+    );
+    const cogOffset = Number((motorNozzle.screwPattern.pitch * 5) / 16);
+    const finalXValue = Number(
+      inicialCordenate.x -
+        motorNozzle.internalMajorRadius +
+        motorNozzle.internalMinorRadius
+    );
+    let screwCoordenates = [];
+    let coordenate = {
+      x:
+        inicialCordenate.x +
+        motorNozzle.internalMinorRadius -
+        motorNozzle.screwPattern.minMinorDiameter / 2,
+      y: inicialCordenate.y,
+    };
+    screwCoordenates.push(coordenate);
+    while (
+      coordenate.y + motorNozzle.screwPattern.pitch - inicialCordenate.y <
+      motorNozzle.screwHeight
+    ) {
+      let firstPoint = {
+        x: coordenate.x,
+        y: coordenate.y + motorNozzle.screwPattern.pitch / 4,
+      };
+      screwCoordenates.push(firstPoint);
+      let secondPoint = {
+        x: firstPoint.x - diamtetersDifference,
+        y: firstPoint.y + cogOffset,
+      };
+      screwCoordenates.push(secondPoint);
+      let thridPoint = {
+        x: secondPoint.x,
+        y: secondPoint.y + motorNozzle.screwPattern.pitch / 8,
+      };
+      screwCoordenates.push(thridPoint);
+      let fourthPoint = {
+        x: thridPoint.x + diamtetersDifference,
+        y: thridPoint.y + cogOffset,
+      };
+      screwCoordenates.push(fourthPoint);
+      coordenate = fourthPoint;
+    }
+    screwCoordenates.push({
+      x: coordenate.x,
+      y: motorNozzle.screwHeight + inicialCordenate.y,
+    });
+    screwCoordenates.push({
+      x: finalXValue,
+      y: motorNozzle.screwHeight + inicialCordenate.y,
+    });
+    return screwCoordenates;
+  };
+
   render() {
     const { classes } = this.props;
-    console.log("rodei");
     this.createMotorDraw();
     return (
       <div>
@@ -443,9 +777,7 @@ class MotorView extends Component {
           spacing={1}
         >
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              <svg className={classes.icon} id="motor-front-view"></svg>
-            </Paper>
+            <Paper className={classes.paper} id="motor-view-container"></Paper>
           </Grid>
         </Grid>
       </div>

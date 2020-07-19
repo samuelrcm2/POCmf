@@ -93,7 +93,6 @@ const MotorNozzle = (props) => {
     setCreatedScrewMinMajorDiameter,
     setCreatedScrewMaxMajorDiameter,
     setSelectedScrew,
-    setThickness,
     setAfterScrewHeight,
     motorInternalRadius,
     setPossibleScrewPatterns,
@@ -104,6 +103,7 @@ const MotorNozzle = (props) => {
     setExternalHeight,
     setInternalMajorRadius,
     setInternalMinorRadius,
+    setScrewHeight,
   } = props;
 
   useEffect(() => {
@@ -119,14 +119,16 @@ const MotorNozzle = (props) => {
   useEffect(() => {
     DefinePossibleScrewPatterns();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [motorNozzle, motorInternalRadius]);
+  }, [motorNozzle, motorInternalRadius, screwPatterns]);
 
   const DefinePossibleScrewPatterns = () => {
+    if (!motorThickness || !motorInternalRadius) return;
     let externalRadius = motorThickness + motorInternalRadius;
     let possibleScrewPatterns = screwPatterns.filter(
       (s) =>
-        s.minMinorDiameter >= motorInternalRadius &&
-        s.maxMajorDiameter <= externalRadius
+        s.maxMinorDiameter <= motorInternalRadius * 2 &&
+        s.minMajorDiameter >= motorInternalRadius * 2 &&
+        s.maxMajorDiameter <= externalRadius * 2
     );
     possibleScrewPatterns =
       possibleScrewPatterns.length === 0
@@ -304,14 +306,11 @@ const MotorNozzle = (props) => {
                 <Select
                   labelId="screw-type-select-label"
                   id="screw-type-select"
-                  value={motorNozzle.screwPattern}
+                  value={motorNozzle.screwPattern.id}
                   onChange={(ev) => setSelectedScrew(ev.target.value)}
                 >
-                  <MenuItem key={0} value={0}>
-                    {""}
-                  </MenuItem>
                   {screwPatternsByDiameter.map((screwPattern) => (
-                    <MenuItem key={screwPattern.id} value={screwPattern}>
+                    <MenuItem key={screwPattern.id} value={screwPattern.id}>
                       {screwPattern.name}
                     </MenuItem>
                   ))}
@@ -321,7 +320,7 @@ const MotorNozzle = (props) => {
             <TextField
               className={clsx(classes.textField, classes.margin)}
               id="mn-screw-height"
-              onChange={(ev) => setCreatedScrewPitch(ev.target.value)}
+              onChange={(ev) => setScrewHeight(ev.target.value)}
               label="Screw Height(mm)"
               type="number"
               defaultValue={motorNozzle.screwHeight}
@@ -341,6 +340,21 @@ const MotorNozzle = (props) => {
                 className: classes.input,
               }}
             />
+
+            <TextField
+              className={clsx(classes.textField, classes.margin)}
+              id="mn-after-screw-height"
+              onChange={(ev) => setAfterScrewHeight(ev.target.value)}
+              label="After Screw Height (mm)"
+              type="number"
+              defaultValue={motorNozzle.afterScrewHeight}
+              margin="normal"
+              fullWidth
+              InputProps={{
+                className: classes.input,
+              }}
+            />
+
             <TextField
               className={clsx(classes.textField, classes.margin)}
               id="mn-external-height"
@@ -375,32 +389,6 @@ const MotorNozzle = (props) => {
                 className: classes.input,
               }}
             />
-
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-thickness"
-              onChange={(ev) => setThickness(ev.target.value)}
-              label="Thickness (mm)"
-              type="number"
-              defaultValue={motorNozzle.thickness}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-after-screw-height"
-              onChange={(ev) => setAfterScrewHeight(ev.target.value)}
-              label="After Screw Height (mm)"
-              type="number"
-              defaultValue={motorNozzle.afterScrewHeight}
-              margin="normal"
-              fullWidth
-              InputProps={{
-                className: classes.input,
-              }}
-            />
           </div>
         </Paper>
       </div>
@@ -425,7 +413,7 @@ const MotorNozzle = (props) => {
 const mapStateToProps = (state) => ({
   screwPatterns: state.headMotor.screwPatterns,
   motorNozzle: state.motorNozzle.motorNozzle,
-  screwPatternsByDiameter: state.motorNozzle.screwPatternsByDiameter,
+  screwPatternsByDiameter: state.headMotor.screwPatternsByDiameter,
   motorChainButtonIsDisabled: state.motorChain.buttonIsDisabled,
   motorThickness: state.motorChain.motorChain.thickness,
   motorInternalRadius: state.motorChain.motorChain.internalRadius,
