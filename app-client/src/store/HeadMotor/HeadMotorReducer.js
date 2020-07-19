@@ -99,6 +99,38 @@ const reducer = (state = INITIAL_STATE, action) => {
           },
         },
       };
+    case HeadMotorActionsType.AFTER_SCREW_HEIGHT_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          afterScrewHeight: action.payload,
+        },
+      };
+    case HeadMotorActionsType.INTERNAL_RADIUS_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          internalRadius: action.payload,
+        },
+      };
+    case HeadMotorActionsType.INTERNAL_MINOR_RAIDUS_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          internalMinorRadius: action.payload,
+        },
+      };
+    case HeadMotorActionsType.THICKNESS_SETTED:
+      return {
+        ...state,
+        headMotor: {
+          ...state.headMotor,
+          thickness: action.payload,
+        },
+      };
     default:
       return { ...state };
   }

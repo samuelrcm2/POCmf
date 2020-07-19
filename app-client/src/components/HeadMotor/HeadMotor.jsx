@@ -90,7 +90,6 @@ const HeadMotor = (props) => {
     setInternalHeight,
     setScrewHeight,
     calculateScrewMaxStress,
-    motorChainButtonIsDisabled,
     motorThickness,
     motorInternalRadius,
     motorWorkPressure,
@@ -102,6 +101,10 @@ const HeadMotor = (props) => {
     setCreatedScrewMaxMinorDiameter,
     setCreatedScrewMinMajorDiameter,
     setCreatedScrewMaxMajorDiameter,
+    setAfterScrewHeight,
+    setThickness,
+    setInternalRadius,
+    setInternalMinorRadius,
   } = props;
 
   const classes = useStyles();
@@ -110,7 +113,9 @@ const HeadMotor = (props) => {
   const [isCreatedPattern, setSwitchState] = useState(false);
 
   useEffect(() => {
-    getAllScrewPatterns();
+    if (isNilOrEmpty(screwPatterns)) {
+      getAllScrewPatterns();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -137,6 +142,30 @@ const HeadMotor = (props) => {
 
     if (isNilOrEmpty(headMotor.externalHeadHeight)) {
       setMessageError("Please, select a External Height.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(headMotor.afterScrewHeight)) {
+      setMessageError("Please, insert a After Screw Height.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(headMotor.internalRadius)) {
+      setMessageError("Please, insert a Internal Radius.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(headMotor.internalMinorRadius)) {
+      setMessageError("Please, insert a Minor Internal Radius.");
+      setButtonState(true);
+      return;
+    }
+
+    if (isNilOrEmpty(headMotor.thickness)) {
+      setMessageError("Please, insert a Thickness.");
       setButtonState(true);
       return;
     }
@@ -346,11 +375,60 @@ const HeadMotor = (props) => {
 
           <TextField
             className={clsx(classes.textField, classes.margin)}
+            id="internal-height"
+            onChange={(ev) => setAfterScrewHeight(ev.target.value)}
+            label="After Screw Height (mm)"
+            type="number"
+            defaultValue={headMotor.afterScrewHeight}
+            margin="normal"
+            fullWidth
+            InputProps={{
+              className: classes.input,
+            }}
+          />
+
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
             id="motor-chain-thickness"
             onChange={(ev) => setExternalHeight(ev.target.value)}
             label="External Height (mm)"
             type="number"
             defaultValue={headMotor.externalHeadHeight}
+            InputProps={{
+              className: classes.input,
+            }}
+          />
+
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
+            id="mn-internal-major-radius"
+            onChange={(ev) => setInternalRadius(ev.target.value)}
+            label="Internal Major Radius (mm)"
+            type="number"
+            defaultValue={headMotor.internalRadius}
+            InputProps={{
+              className: classes.input,
+            }}
+          />
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
+            id="mn-internal-minor-radius"
+            onChange={(ev) => setInternalMinorRadius(ev.target.value)}
+            label="Internal Minor Radius (mm)"
+            type="number"
+            defaultValue={headMotor.internalMinorRadius}
+            InputProps={{
+              className: classes.input,
+            }}
+          />
+
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
+            id="mn-thickness"
+            onChange={(ev) => setThickness(ev.target.value)}
+            label="Thickness (mm)"
+            type="number"
+            defaultValue={headMotor.thickness}
             InputProps={{
               className: classes.input,
             }}

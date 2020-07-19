@@ -79,7 +79,6 @@ function MotorChainInfo(props) {
     motorChain,
     materials,
     calculationType,
-    calculatedData,
     setCalculationType,
     setRadius,
     setHeight,
@@ -94,7 +93,9 @@ function MotorChainInfo(props) {
     setButtonState,
   } = props;
   useEffect(() => {
-    props.getAllMaterials();
+    if (isNilOrEmpty(materials)) {
+      props.getAllMaterials();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {

@@ -1,6 +1,7 @@
 import api from "../../Services/api";
-import { HeadMotorActionsType } from "./HeadMotorTypes";
+import { MotorNozzleActionsType } from "./MotorNozzleTypes";
 import { changeGenericAlert } from "../Alert/alertActions";
+import { HeadMotorActionsType } from "../HeadMotor/HeadMotorTypes";
 
 export const getAllScrewPatterns = () => {
   return (dispatch) => {
@@ -34,7 +35,7 @@ export const calculateScrewMaxStress = (headMotor) => {
 //Actions
 export const addAllScrewPatterns = (screwPatterns) => {
   return {
-    type: HeadMotorActionsType.SCREW_PATTERN_GETTED,
+    type: MotorNozzleActionsType.SCREW_PATTERN_GETTED,
     payload: screwPatterns,
   };
 };
@@ -48,98 +49,98 @@ export const setPossibleScrewPatterns = (screwPatterns) => {
 
 export const setSelectedScrew = (screwPattern) => {
   return {
-    type: HeadMotorActionsType.SELECT_SCREW_PATTERN_SETTED,
+    type: MotorNozzleActionsType.SELECT_SCREW_PATTERN_SETTED,
     payload: screwPattern,
   };
 };
 
 export const setExternalHeight = (value) => {
   return {
-    type: HeadMotorActionsType.EXTERNAL_HEIGHT_SETTED,
-    payload: Number(value),
+    type: MotorNozzleActionsType.EXTERNAL_HEIGHT_SETTED,
+    payload: value,
   };
 };
 
 export const setInternalHeight = (value) => {
   return {
-    type: HeadMotorActionsType.INTERNAL_HEIGHT_SETTED,
+    type: MotorNozzleActionsType.INTERNAL_HEIGHT_SETTED,
     payload: value,
   };
 };
 
 export const setScrewHeight = (value) => {
   return {
-    type: HeadMotorActionsType.SCREW_HEIGHT_SETTED,
+    type: MotorNozzleActionsType.SCREW_HEIGHT_SETTED,
     payload: value,
-  };
-};
-
-export const setThickness = (value) => {
-  return {
-    type: HeadMotorActionsType.THICKNESS_SETTED,
-    payload: Number(value),
   };
 };
 
 const setScrewMaxStress = (value) => {
   return {
-    type: HeadMotorActionsType.SCREW_MAX_STRESS,
+    type: MotorNozzleActionsType.SCREW_MAX_STRESS,
     payload: value,
   };
 };
 
 export const setCreatedScrewPitch = (value) => {
   return {
-    type: HeadMotorActionsType.CREATED_PITCH_SCREW_SETTED,
+    type: MotorNozzleActionsType.CREATED_PITCH_SCREW_SETTED,
     payload: value,
   };
 };
 
-export const setInternalRadius = (value) => {
+export const setThickness = (value) => {
   return {
-    type: HeadMotorActionsType.INTERNAL_RADIUS_SETTED,
-    payload: Number(value),
-  };
-};
-
-export const setInternalMinorRadius = (value) => {
-  return {
-    type: HeadMotorActionsType.INTERNAL_MINOR_RAIDUS_SETTED,
-    payload: Number(value),
-  };
-};
-
-export const setCreatedScrewMinMinorDiameter = (value) => {
-  return {
-    type: HeadMotorActionsType.CREATED_MIN_MINOR_DIAMETER_SCREW_SETTED,
-    payload: value,
-  };
-};
-
-export const setCreatedScrewMaxMinorDiameter = (value) => {
-  return {
-    type: HeadMotorActionsType.CREATED_MAX_MINOR_DIAMETER_SCREW_SETTED,
-    payload: value,
-  };
-};
-
-export const setCreatedScrewMinMajorDiameter = (value) => {
-  return {
-    type: HeadMotorActionsType.CREATED_MIN_MAJOR_DIAMETER_SCREW_SETTED,
-    payload: value,
-  };
-};
-
-export const setCreatedScrewMaxMajorDiameter = (value) => {
-  return {
-    type: HeadMotorActionsType.CREATED_MAX_MAJOR_DIAMETER_SCREW_SETTED,
+    type: MotorNozzleActionsType.THICKNESS_SETTED,
     payload: value,
   };
 };
 
 export const setAfterScrewHeight = (value) => {
   return {
-    type: HeadMotorActionsType.AFTER_SCREW_HEIGHT_SETTED,
-    payload: Number(value),
+    type: MotorNozzleActionsType.AFTER_SCREW_HEIGHT_SETTED,
+    payload: value,
+  };
+};
+
+export const setInternalMajorRadius = (value) => {
+  return {
+    type: MotorNozzleActionsType.INTERNAL_MAJOR_RADIUS_SETTED,
+    payload: value,
+  };
+};
+
+export const setInternalMinorRadius = (value) => {
+  return {
+    type: MotorNozzleActionsType.INTERNAL_MINOR_RADIUS_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMinMinorDiameter = (value) => {
+  return {
+    type: MotorNozzleActionsType.CREATED_MIN_MINOR_DIAMETER_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMaxMinorDiameter = (value) => {
+  return {
+    type: MotorNozzleActionsType.CREATED_MAX_MINOR_DIAMETER_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMinMajorDiameter = (value) => {
+  return {
+    type: MotorNozzleActionsType.CREATED_MIN_MAJOR_DIAMETER_SCREW_SETTED,
+    payload: value,
+  };
+};
+
+export const setCreatedScrewMaxMajorDiameter = (value) => {
+  return {
+    type: MotorNozzleActionsType.CREATED_MAX_MAJOR_DIAMETER_SCREW_SETTED,
+    payload: value,
   };
 };
