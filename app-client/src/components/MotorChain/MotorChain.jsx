@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import clsx from "clsx";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -20,59 +19,7 @@ import { isNilOrEmpty } from "ramda-adjunct";
 
 import * as motorChainActions from "../../store/motorChain/motorChainActions";
 import { CalculationTypes } from "../../store/motorChain/motorChainTypes";
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-      justifyContent: "center",
-      "& .MuiTextField-root": {
-        width: 130,
-        color: "white",
-        border: "white",
-      },
-      "& .MuiFormLabel-root": {
-        fontSize: "10px",
-      },
-      "& .MuiInputBase-input": {
-        fontSize: "10px",
-      },
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    input: {
-      color: "black",
-    },
-    textField: {
-      width: 300,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 130,
-    },
-    select: {
-      fontSize: "10px",
-    },
-    button: {
-      display: "flex",
-      justifyContent: "center",
-      paddingTop: "10px",
-      paddingBottom: "10px",
-    },
-    result: {
-      color: "Black",
-      display: "flex",
-      justifyContent: "flex-start",
-    },
-    resultPaper: {
-      width: "50%",
-      marginRight: "5px",
-    },
-  })
-);
+import useStyles from "./MotorChainStyle";
 
 function MotorChainInfo(props) {
   const {

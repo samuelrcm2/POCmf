@@ -3,29 +3,13 @@ import React from "react";
 import { connect } from "react-redux";
 
 //CSS
-import { createStyles, makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 
 //Third Part Libraries
 import { isNilOrEmpty } from "ramda-adjunct";
 
 import { nameTranslations } from "../../store/motorChain/motorChainTypes";
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      result: {
-        color: "Black",
-        display: "flex",
-        justifyContent: "flex-start",
-      },
-      resultPaper: {
-        width: "50%",
-        marginRight: "5px",
-        paddingRight: "15px",
-      },
-    },
-  })
-);
+import useStyles from "./CalculatedDataStyle";
 
 const CalculatedData = (props) => {
   const classes = useStyles();

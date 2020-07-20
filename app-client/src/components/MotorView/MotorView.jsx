@@ -8,7 +8,8 @@ import { withStyles } from "@material-ui/styles";
 import { isNilOrEmpty } from "ramda-adjunct";
 
 import { CalculationTypes } from "../../store/motorChain/motorChainTypes";
-const useStyles = (theme) => ({
+
+const useStyles = () => ({
   icon: {
     width: "300px",
     height: "800px",
@@ -21,6 +22,7 @@ const useStyles = (theme) => ({
     width: "100%",
   },
 });
+
 class MotorView extends Component {
   checkIfHasData = () => {
     if (this.isValueValid(this.props.calculationType)) return false;
@@ -57,15 +59,14 @@ class MotorView extends Component {
     if (this.isValueValid(this.props.headMotor.externalHeadHeight))
       return false;
 
-    if (this.isNilOrEmpty(this.props.headMotor.afterScrewHeight)) return false;
+    if (isNilOrEmpty(this.props.headMotor.afterScrewHeight)) return false;
 
     if (this.isValueValid(this.props.headMotor.internalRadius)) return false;
 
     if (this.isValueValid(this.props.headMotor.internalMinorRadius))
       return false;
 
-    if (this.isNilOrEmpty(this.props.motorNozzle.afterScrewHeight))
-      return false;
+    if (isNilOrEmpty(this.props.motorNozzle.afterScrewHeight)) return false;
 
     if (this.isValueValid(this.props.motorNozzle.screwHeight)) return false;
 
