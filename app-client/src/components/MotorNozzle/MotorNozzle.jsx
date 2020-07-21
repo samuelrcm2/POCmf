@@ -2,22 +2,13 @@ import React, { useEffect, useState } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
-import clsx from "clsx";
-import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
-import Tooltip from "@material-ui/core/Tooltip";
-import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 
 import { isNilOrEmpty } from "ramda-adjunct";
 import * as MotorNozzleActions from "../../store/MotorNozzle/MotorNozzleActions";
 import { ScrewPattern } from "../../store/HeadMotor/HeadMotorTypes";
 import useStyles from "./MotorNozzleStyle";
+import FormBuilder from "../Generic/FormBuilder/FormBuilder";
 
 const MotorNozzle = (props) => {
   const classes = useStyles();
@@ -27,28 +18,15 @@ const MotorNozzle = (props) => {
   const {
     motorNozzle,
     screwPatternsByDiameter,
-    setCreatedScrewPitch,
-    setCreatedScrewMinMinorDiameter,
-    setCreatedScrewMaxMinorDiameter,
-    setCreatedScrewMinMajorDiameter,
-    setCreatedScrewMaxMajorDiameter,
-    setSelectedScrew,
-    setAfterScrewHeight,
     motorInternalRadius,
     setPossibleScrewPatterns,
     motorThickness,
     screwPatterns,
-    getAllScrewPatterns,
-    setInternalHeight,
-    setExternalHeight,
-    setInternalMajorRadius,
-    setInternalMinorRadius,
-    setScrewHeight,
   } = props;
 
   useEffect(() => {
     if (isNilOrEmpty(screwPatterns)) {
-      getAllScrewPatterns();
+      props.getAllScrewPatterns();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -149,202 +127,156 @@ const MotorNozzle = (props) => {
     setMessageError("");
     return;
   };
+  const Form = {
+    forms: [
+      {
+        type: "TextField",
+        id: "hm-created-pitch",
+        label: "Pitch (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.screwPattern.pitch,
+        onChange: (value) => props.setCreatedScrewPitch(value),
+        hasTooltip: false,
+        isVisible: isCreatedPattern,
+      },
+      {
+        type: "TextField",
+        id: "hm-created-min-minor-diameter",
+        label: "Minimum Minor Diameter (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.screwPattern.minMinorDiameter,
+        onChange: (value) => props.setCreatedScrewMinMinorDiameter(value),
+        hasTooltip: false,
+        isVisible: isCreatedPattern,
+      },
+      {
+        type: "TextField",
+        id: "hm-created-max-minor-diameter",
+        label: "Maximum Minor Diameter (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.screwPattern.maxMinorDiameter,
+        onChange: (value) => props.setCreatedScrewMaxMinorDiameter(value),
+        hasTooltip: false,
+        isVisible: isCreatedPattern,
+      },
+      {
+        type: "TextField",
+        id: "hm-created-min-major-diameter",
+        label: "Minimum Major Diameter (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.screwPattern.maxMajorDiameter,
+        onChange: (value) => props.setCreatedScrewMinMajorDiameter(value),
+        hasTooltip: false,
+        isVisible: isCreatedPattern,
+      },
+      {
+        type: "TextField",
+        id: "hm-created-max-major-diameter",
+        label: "Maximum Major Diameter (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.screwPattern.maxMajorDiameter,
+        onChange: (value) => props.setCreatedScrewMaxMajorDiameter(value),
+        hasTooltip: false,
+        isVisible: isCreatedPattern,
+      },
+      {
+        type: "Select",
+        id: "hm-created-max-major-diameter",
+        label: "Screw Type",
+        inputType: "number",
+        defaultValue: motorNozzle.screwPattern.id,
+        onChange: (value) => props.setSelectedScrew(value),
+        hasTooltip: false,
+        isVisible: !isCreatedPattern,
+        selectOptions: screwPatternsByDiameter,
+      },
+      {
+        type: "TextField",
+        id: "hm-screw-height",
+        label: "Screw Height (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.screwHeight,
+        onChange: (value) => props.setScrewHeight(value),
+        hasTooltip: false,
+        isVisible: true,
+      },
+      {
+        type: "TextField",
+        id: "hm-internal-height",
+        label: "Internal Height (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.internalHeadHeight,
+        onChange: (value) => props.setInternalHeight(value),
+        hasTooltip: false,
+        isVisible: true,
+      },
+      {
+        type: "TextField",
+        id: "hm-after-screw-height",
+        label: "After Screw Height (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.afterScrewHeight,
+        onChange: (value) => props.setAfterScrewHeight(value),
+        hasTooltip: false,
+        isVisible: true,
+      },
+      {
+        type: "TextField",
+        id: "hm-external-height",
+        label: "External Height (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.externalHeadHeight,
+        onChange: (value) => props.setExternalHeight(value),
+        hasTooltip: false,
+        isVisible: true,
+      },
+      {
+        type: "TextField",
+        id: "hm-internal-major-radius",
+        label: "Internal Major Radius (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.internalRadius,
+        onChange: (value) => props.setInternalMajorRadius(value),
+        hasTooltip: false,
+        isVisible: true,
+      },
+      {
+        type: "TextField",
+        id: "hm-internal-minor-radius",
+        label: "Internal Minor Radius (mm)",
+        inputType: "number",
+        defaultValue: motorNozzle.internalMinorRadius,
+        onChange: (value) => props.setInternalMinorRadius(value),
+        hasTooltip: false,
+        isVisible: true,
+      },
+    ],
+    hasSwitch: true,
+    hasButtom: true,
+    switch: {
+      checked: isCreatedPattern,
+      onChange: () => setSwitchState(!isCreatedPattern),
+      name: "checkedB",
+      label: "Own Pattern",
+      tooltipTitle: "Define your own screw pattern.",
+      tooltipPlaceholder: "bottom",
+    },
+    bottom: {
+      disabled: buttonIsDisabled,
+      label: "Calculate",
+      onClick: () => console.log(),
+      tooltipMessage: messageError,
+      tooltipPlaceholder: "bottom",
+    },
+  };
+  console.log(Form);
+
   return (
     <div>
       <div className={classes.root}>
         <Paper>
-          <div className={classes.switch}>
-            <Tooltip
-              title="Define your own screw pattern."
-              placeholder="bottom"
-            >
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={isCreatedPattern}
-                    onChange={() => setSwitchState(!isCreatedPattern)}
-                    name="checkedB"
-                    color="primary"
-                    size="small"
-                  />
-                }
-                label="Own Pattern"
-              />
-            </Tooltip>
-          </div>
-          <div>
-            {isCreatedPattern ? (
-              <div>
-                <TextField
-                  className={clsx(classes.textField, classes.margin)}
-                  id="mn-created-pitch"
-                  onChange={(ev) => setCreatedScrewPitch(ev.target.value)}
-                  label="Pitch (mm)"
-                  type="number"
-                  defaultValue={motorNozzle.screwPattern.pitch}
-                  InputProps={{
-                    className: classes.input,
-                  }}
-                />
-
-                <TextField
-                  className={clsx(classes.textField, classes.margin)}
-                  id="mn-created-min-minor-diameter"
-                  onChange={(ev) =>
-                    setCreatedScrewMinMinorDiameter(ev.target.value)
-                  }
-                  label="Minimum Minor Diameter (mm)"
-                  type="number"
-                  defaultValue={motorNozzle.screwPattern.minMinorDiameter}
-                  InputProps={{
-                    className: classes.input,
-                  }}
-                />
-                <TextField
-                  className={clsx(classes.textField, classes.margin)}
-                  id="mn-created-max-minor-diameter"
-                  onChange={(ev) =>
-                    setCreatedScrewMaxMinorDiameter(ev.target.value)
-                  }
-                  label="Maximum Minor Diameter (mm)"
-                  type="number"
-                  defaultValue={motorNozzle.screwPattern.maxMinorDiameter}
-                  InputProps={{
-                    className: classes.input,
-                  }}
-                />
-                <TextField
-                  className={clsx(classes.textField, classes.margin)}
-                  id="mn-created-min-major-diameter"
-                  onChange={(ev) =>
-                    setCreatedScrewMinMajorDiameter(ev.target.value)
-                  }
-                  label="Minimum Major Diameter (mm)"
-                  type="number"
-                  defaultValue={motorNozzle.screwPattern.maxMajorDiameter}
-                  InputProps={{
-                    className: classes.input,
-                  }}
-                />
-                <TextField
-                  className={clsx(classes.textField, classes.margin)}
-                  id="mn-created-max-major-diameter"
-                  onChange={(ev) =>
-                    setCreatedScrewMaxMajorDiameter(ev.target.value)
-                  }
-                  label="Maximum Major Diameter (mm)"
-                  type="number"
-                  defaultValue={motorNozzle.screwPattern.maxMajorDiameter}
-                  InputProps={{
-                    className: classes.input,
-                  }}
-                />
-              </div>
-            ) : (
-              <FormControl className={classes.formControl} size="small">
-                <InputLabel id="mn-select-screw-pattern">Screw Type</InputLabel>
-                <Select
-                  labelId="screw-type-select-label"
-                  id="screw-type-select"
-                  value={motorNozzle.screwPattern.id}
-                  onChange={(ev) => setSelectedScrew(ev.target.value)}
-                >
-                  {screwPatternsByDiameter.map((screwPattern) => (
-                    <MenuItem key={screwPattern.id} value={screwPattern.id}>
-                      {screwPattern.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-screw-height"
-              onChange={(ev) => setScrewHeight(ev.target.value)}
-              label="Screw Height(mm)"
-              type="number"
-              defaultValue={motorNozzle.screwHeight}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-internal-height"
-              onChange={(ev) => setInternalHeight(ev.target.value)}
-              label="Internal Height (mm)"
-              type="number"
-              defaultValue={motorNozzle.internalHeight}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-after-screw-height"
-              onChange={(ev) => setAfterScrewHeight(ev.target.value)}
-              label="After Screw Height (mm)"
-              type="number"
-              defaultValue={motorNozzle.afterScrewHeight}
-              margin="normal"
-              fullWidth
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-external-height"
-              onChange={(ev) => setExternalHeight(ev.target.value)}
-              label="External Height (mm)"
-              type="number"
-              defaultValue={motorNozzle.externalHeight}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-internal-major-radius"
-              onChange={(ev) => setInternalMajorRadius(ev.target.value)}
-              label="Internal Major Radius (mm)"
-              type="number"
-              defaultValue={motorNozzle.internalMajorRadius}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-            <TextField
-              className={clsx(classes.textField, classes.margin)}
-              id="mn-internal-minor-radius"
-              onChange={(ev) => setInternalMinorRadius(ev.target.value)}
-              label="Internal Minor Radius (mm)"
-              type="number"
-              defaultValue={motorNozzle.internalMinorRadius}
-              InputProps={{
-                className: classes.input,
-              }}
-            />
-          </div>
+          <FormBuilder formProps={Form} />
         </Paper>
-      </div>
-      <div className={classes.button}>
-        <Tooltip title={messageError} placeholder="bottom">
-          <span>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={buttonIsDisabled}
-              onClick={() => console.log()}
-            >
-              Calculate
-            </Button>
-          </span>
-        </Tooltip>
       </div>
     </div>
   );

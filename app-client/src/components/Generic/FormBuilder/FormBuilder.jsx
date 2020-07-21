@@ -14,7 +14,8 @@ import Switch from "@material-ui/core/Switch";
 import useStyles from "./FormBuilderStyle";
 
 const FormBuilder = (props) => {
-  const { forms } = props;
+  const { formProps } = props;
+  const { forms } = formProps;
   const classes = useStyles();
 
   const createSwitch = (switchForm) => {
@@ -28,7 +29,7 @@ const FormBuilder = (props) => {
             control={
               <Switch
                 checked={switchForm.checked}
-                onChange={() => switchForm.onChange(!switchForm.checked)}
+                onChange={() => switchForm.onChange(switchForm.checked)}
                 name={switchForm.name}
                 color="primary"
                 size="small"
@@ -43,6 +44,25 @@ const FormBuilder = (props) => {
 
   const createTextFieldForm = (form) => {
     if (!form.isVisible) return null;
+    if (form.hasTooltip)
+      return (
+        <Tooltip
+          title={form.tooltip.message}
+          placeholder={form.tooltip.placeholder}
+        >
+          <TextField
+            className={clsx(classes.textField, classes.margin)}
+            id={form.id}
+            onChange={(ev) => form.onChange(ev.target.value)}
+            label={form.label}
+            type={form.inputType}
+            defaultValue={form.defaultValue}
+            InputProps={{
+              className: classes.input,
+            }}
+          />
+        </Tooltip>
+      );
     return (
       <TextField
         className={clsx(classes.textField, classes.margin)}
@@ -60,11 +80,32 @@ const FormBuilder = (props) => {
 
   const createSelectFieldForm = (form) => {
     if (!form.isVisible) return null;
+    if (form.hasTooltip)
+      return (
+        <Tooltip
+          title={form.tooltip.message}
+          placeholder={form.tooltip.placeholder}
+        >
+          <FormControl className={classes.formControl} size="small">
+            <InputLabel>{form.label}</InputLabel>
+            <Select
+              value={form.defaultValue}
+              onChange={(ev) => form.onChange(ev.target.value)}
+            >
+              {form.selectOptions.map((options) => (
+                <MenuItem key={options.id} value={options.id}>
+                  {options.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Tooltip>
+      );
     return (
       <FormControl className={classes.formControl} size="small">
         <InputLabel>{form.label}</InputLabel>
         <Select
-          value={form.selectOptions.id}
+          value={form.defaultValue}
           onChange={(ev) => form.onChange(ev.target.value)}
         >
           {form.selectOptions.map((options) => (
@@ -100,7 +141,7 @@ const FormBuilder = (props) => {
   };
   return (
     <Fragment>
-      {forms.hasSwitch && createSwitch(forms.switch)}
+      {formProps.hasSwitch && createSwitch(formProps.switch)}
       {forms.map((f) => {
         switch (f.type) {
           case "TextField":
@@ -111,73 +152,87 @@ const FormBuilder = (props) => {
             return null;
         }
       })}
-      {forms.hasButtom && createButtom(forms.button)}
+      {formProps.hasButtom && createButtom(formProps.bottom)}
     </Fragment>
   );
 };
 
 FormBuilder.propTypes = {
-  form: PropTypes.arrayOf(
-    PropTypes.exact({
-      type: PropTypes.oneOf(["TextField", "Select"]),
-      id: PropTypes.string,
-      label: PropTypes.string,
-      inputType: PropTypes.string,
-      defaultValue: PropTypes.node,
+  formProps: PropTypes.exact({
+    forms: PropTypes.arrayOf(
+      PropTypes.exact({
+        type: PropTypes.oneOf(["TextField", "Select"]),
+        id: PropTypes.string,
+        label: PropTypes.string,
+        inputType: PropTypes.string,
+        defaultValue: PropTypes.node,
+        onChange: PropTypes.func,
+        hasTooltip: PropTypes.bool,
+        tooltip: PropTypes.exact({
+          message: PropTypes.string,
+          placeholder: PropTypes.oneOf([
+            "bottom-end",
+            "bottom-start",
+            "bottom",
+            "left-end",
+            "left-start",
+            "left",
+            "right-end",
+            "right-start",
+            "right",
+            "top-end",
+            "top-start",
+            "top",
+          ]),
+        }),
+        onlyAppearsWithSwitch: PropTypes.bool,
+        isVisible: PropTypes.bool,
+        selectOptions: PropTypes.arrayOf(PropTypes.object),
+      })
+    ).isRequired,
+    hasSwitch: PropTypes.bool.isRequired,
+    hasButtom: PropTypes.bool.isRequired,
+    switch: PropTypes.exact({
+      checked: PropTypes.bool,
       onChange: PropTypes.func,
-      hasTooltip: PropTypes.bool,
-      onlyAppearsWithSwitch: PropTypes.bool,
-      isVisible: PropTypes.func,
-      selectOptions: PropTypes.arrayOf(
-        PropTypes.exact({
-          id: PropTypes.number,
-          name: PropTypes.string,
-        })
-      ),
-    })
-  ).isRequired,
-  hasSwitch: PropTypes.bool.isRequired,
-  hasButtom: PropTypes.bool.isRequired,
-  switch: PropTypes.exact({
-    checked: PropTypes.bool,
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-    label: PropTypes.string,
-    tooltipTitle: PropTypes.string,
-    tooltipPlaceholder: PropTypes.oneOf([
-      "bottom-end",
-      "bottom-start",
-      "bottom",
-      "left-end",
-      "left-start",
-      "left",
-      "right-end",
-      "right-start",
-      "right",
-      "top-end",
-      "top-start",
-      "top",
-    ]),
-  }),
-  bottom: PropTypes.exact({
-    disabled: PropTypes.bool,
-    label: PropTypes.string,
-    onClick: PropTypes.func,
-    tooltipMessage: PropTypes.func,
-    tooltipPlaceholder: PropTypes.oneOf([
-      "bottom-end",
-      "bottom-start",
-      "bottom",
-      "left-end",
-      "left-start",
-      "left",
-      "right-end",
-      "right-start",
-      "right",
-      "top-end",
-      "top-start",
-      "top",
-    ]),
+      name: PropTypes.string,
+      label: PropTypes.string,
+      tooltipTitle: PropTypes.string,
+      tooltipPlaceholder: PropTypes.oneOf([
+        "bottom-end",
+        "bottom-start",
+        "bottom",
+        "left-end",
+        "left-start",
+        "left",
+        "right-end",
+        "right-start",
+        "right",
+        "top-end",
+        "top-start",
+        "top",
+      ]),
+    }),
+    bottom: PropTypes.exact({
+      disabled: PropTypes.bool,
+      label: PropTypes.string,
+      onClick: PropTypes.func,
+      tooltipMessage: PropTypes.string,
+      tooltipPlaceholder: PropTypes.oneOf([
+        "bottom-end",
+        "bottom-start",
+        "bottom",
+        "left-end",
+        "left-start",
+        "left",
+        "right-end",
+        "right-start",
+        "right",
+        "top-end",
+        "top-start",
+        "top",
+      ]),
+    }),
   }),
 };
 
