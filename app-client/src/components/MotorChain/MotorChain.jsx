@@ -4,14 +4,12 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 //CSS
-import Paper from "@material-ui/core/Paper";
-
+import "./MotorChain.css"
 //Third Part Libraries
 import { isNilOrEmpty } from "ramda-adjunct";
 
 import * as motorChainActions from "../../store/motorChain/motorChainActions";
 import { CalculationTypes } from "../../store/motorChain/motorChainTypes";
-import useStyles from "./MotorChainStyle";
 import FormBuilder from "../Generic/FormBuilder/FormBuilder";
 
 function MotorChainInfo(props) {
@@ -34,7 +32,6 @@ function MotorChainInfo(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [motorChain, calculationType]);
 
-  const classes = useStyles();
   const [messageError, setMessageError] = useState("");
   const checkIfHasData = () => {
     if (isNilOrEmpty(calculationType)) {
@@ -239,13 +236,9 @@ function MotorChainInfo(props) {
   };
   console.log(Form);
   return (
-    <div>
-      <div className={classes.root}>
-        <Paper>
-          <FormBuilder formProps={Form} />
-        </Paper>
+      <div className="Form-Base-Paper">
+            <FormBuilder formProps={Form} />
       </div>
-    </div>
   );
 }
 const mapStateToProps = (state) => ({

@@ -1,0 +1,25 @@
+.Data-View-Table {
+  min-width: 700pw;
+}
+
+.Data-View-Result {
+  color: black;
+  display: flex;
+  justify-content: "flex-start";
+}
+
+.Data-View-Result-Paper {
+  width: 50%;
+  margin-right: 5px;
+  padding-right: 15px;
+}
+
+.Calculos-Table {
+  width: auto;
+  margin: 0 22px;
+  background-color: white;
+  color: black;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
+}

@@ -1,0 +1,65 @@
+.FB-root .MuiTextField-root {
+  width: 130;
+  color: white;
+  border: white;
+}
+.FB-root .MuiFormLabel-root {
+  font-size: 10px;
+}
+.FB-root .MuiInputBase-input {
+  font-size: 10px;
+}
+
+.FB-margin {
+  margin: 15px;
+}
+
+.FB-input {
+  color: black;
+}
+
+.FB-textField {
+  width: 300;
+}
+
+.FB-selectEmpty {
+  margin-top: 25px;
+}
+
+.FB-formControl {
+  margin: 15px;
+  min-width: 130;
+}
+
+.FB-select {
+  font-size: 10px;
+}
+
+.FB-button {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.FB-result {
+  color: Black;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.FB-resultPaper {
+  width: 50%;
+  margin-right: 5px;
+}
+.FB-switch {
+  justify-content: flex-start;
+  padding-top: 10px;
+  padding-left: 15px;
+  display: flex;
+  color: black;
+}
+.FB-form {
+  display: flex;
+  justify-content: space-evenly;
+}

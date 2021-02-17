@@ -94,16 +94,17 @@ const App = () => {
         <ThemeProvider theme={theme}>
           <Loader>
             <SideBar />
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
+            <div className="App-Body" >
+              <div className="Motor-View">
                 <MotorView />
-              </Grid>
-              <Grid item xs={6}>
-                <AppBar position="static" className={classes.root}>
+              </div>
+              <div className="Form-Tabs">
+              <AppBar position="static" className={classes.root}>
                   <Tabs
                     value={appBarValue}
                     onChange={handleChange}
-                    aria-label="simple tabs example"
+                    aria-label="Form-tabs"
+                    centered
                   >
                     <Tab
                       className={classes.root}
@@ -132,8 +133,8 @@ const App = () => {
                   <MotorNozzleComponent />
                 </TabPanel>
                 <CalculatedDataComponent />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
             <GenericAlert />
           </Loader>
         </ThemeProvider>

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Loader = (props) => {
   const { children } = props;
-  const [requestCounter, setRequestCounter] = useState(0);
+  const [ requestCounter, setRequestCounter ] = useState(0);
   const classes = useStyles();
 
   let newValue = 0;

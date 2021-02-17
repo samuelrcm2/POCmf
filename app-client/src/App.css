@@ -1,9 +1,29 @@
 .Main {
-  background-color: lightgray;
+  background-color: #292929;
   color: white;
   height: 100%;
   width: 100%;
   font-size: 10px;
+}
+
+.App-Body {
+  background-color: #292929;
+  min-height: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.Motor-View {
+  box-sizing: content-box;
+  min-width: 50%;
+  margin: 0 10px;
+  border-color: #292929;
+}
+
+.Form-Tabs {
+  box-sizing: content-box;
+  margin: 0 20px;
 }
 
 .Main .root .MuiTextField-root {
@@ -18,7 +38,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: lightgray;
+  background-color: #292929;
 }
 
 /* use viewport-relative units to cover page fully */

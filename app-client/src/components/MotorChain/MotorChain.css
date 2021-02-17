@@ -1,0 +1,28 @@
+.Form-Base-Paper {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  border-radius: 5px;
+  width: auto;
+  margin: auto;
+  display: inline-block;
+  text-align: center;
+}
+
+.Form-Base-Paper .MuiTextField-root {
+  max-width: 20%;
+  color: white;
+  border: white;
+}
+
+.Form-Base-Paper .MuiFormLabel-root {
+  font-size: 10px;
+}
+
+.Form-Base-Paper .MuiInputBase-input {
+  font-size: 10px;
+}
+
+.Form-Container {
+  margin: auto;
+}

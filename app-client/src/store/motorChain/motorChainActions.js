@@ -1,4 +1,5 @@
 import api from "../../Services/api";
+import { FormatCalculosResponse } from "../../components/Generic/Util"
 import { MotorChainActionsType, CalculationTypes } from "./motorChainTypes";
 import { changeGenericAlert } from "../Alert/alertActions";
 import store from "../store";
@@ -16,13 +17,14 @@ export const calculateMotorChainProps = (motorChain, calculationType) => {
     api
       .post("/motorChain/", { motorChain, calculationType })
       .then((response) => {
-        dispatch(setMotorChainProps(response.data));
+        dispatch(setMotorChainProps(FormatCalculosResponse(response.data)));
         dispatch(
           changeGenericAlert("Properties calculated successfully", "success")
         );
       });
   };
 };
+
 
 //Actions
 const addAllMaterials = (materials) => {

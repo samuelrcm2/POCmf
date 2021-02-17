@@ -4,19 +4,26 @@ ACCEPTABLE_ERROR = 0.0001
 
 class ThickVessel (MotorChain):
     def calculateCircumferentialStress (self):
-        externalRadius = self.internalRadius + self.thickness
-        self.circumferentialStress = self.workPressure * ((self.internalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) \
-            * (1 + (externalRadius ** 2)/(self.internalRadius ** 2))
+        p = self.workPressure
+        ri = self.internalRadius
+        re = self.internalRadius + self.thickness
+        self.circumferentialStress = p * ((ri ** 2) / (re ** 2 - ri ** 2 )) \
+            * (1 + (re ** 2)/(ri ** 2))
 
 
     def calculateLongitudinalStress (self):
-        self.longitudinalStress = 0
+        p = self.workPressure
+        ri = self.internalRadius
+        re = self.internalRadius + self.thickness
+        self.longitudinalStress = (p * ri ** 2)/((re ** 2)- (ri ** 2))
 
 
     def calculateMaxRadialStress (self):
-        externalRadius = self.internalRadius + self.thickness
-        self.radialStress = self.workPressure * ((self.internalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) \
-            * (1 - (externalRadius ** 2)/(self.internalRadius ** 2))
+        p = self.workPressure
+        ri = self.internalRadius
+        re = self.internalRadius + self.thickness
+        self.radialStress = p * ((ri ** 2) / (re ** 2 - ri ** 2 )) \
+            * (1 - (re ** 2)/(ri ** 2))
 
 
     def calculateThickness (self):

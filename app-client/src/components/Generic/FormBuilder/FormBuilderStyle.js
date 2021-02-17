@@ -50,8 +50,12 @@ export default makeStyles((theme) =>
       marginRight: "5px",
     },
     switch: {
+      justifyContent: "flex-start",
       paddingTop: "10px",
       paddingLeft: "15px",
+      display: "flex",
+      color: "black",
+      marginLeft: "15px"
     },
     form: {
       display: "flex",

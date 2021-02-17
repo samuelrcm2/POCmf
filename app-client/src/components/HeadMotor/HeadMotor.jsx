@@ -290,12 +290,8 @@ const HeadMotor = (props) => {
     },
   };
   return (
-    <div>
-      <div className={classes.root}>
-        <Paper>
+    <div className="Form-Base-Paper">
           <FormBuilder formProps={Form} />
-        </Paper>
-      </div>
     </div>
   );
 };
