@@ -15,6 +15,8 @@ class MotorChain (ProjectHandler):
         self.circumferentialStress: float = motorChain['circumferentialStress'] #Same as tangential
         self.longitudinalStress: float = motorChain['longitudinalStress']
         self.radialStress: float = motorChain['radialStress']
+        self.vonMisesSress: float = None
+        self.nozzleReinforcementThickness: float = None
 
     def __str__(self):
         return f"Motor chain properties: \n \
@@ -39,3 +41,11 @@ class MotorChain (ProjectHandler):
         else:
             self.admissiveStress = fy if fy < fu else fu
         
+    def calculateVonMisesStress (self):
+        s_1 = self.circumferentialStress
+        s_2 = self.longitudinalStress
+        s_3 = self.radialStress
+        self.vonMisesSress = (((s_1 - s_2)**2 + (s_2 - s_3)**2 + (s_1 - s_3)**2)/2) ** 0.5
+
+    def calculateNozzleReinforcementThickness (self):
+        self.nozzleReinforcementThickness = 2.5 * self.thickness

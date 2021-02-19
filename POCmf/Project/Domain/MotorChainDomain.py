@@ -19,7 +19,9 @@ def handleMotorChainCalculationTypes (motorChain, calculationType):
         return {
                 "circumferentialStress" : resultMotorChain.circumferentialStress,
                 "longitudinalStress" : resultMotorChain.longitudinalStress,
-                "radialStress" : resultMotorChain.radialStress
+                "radialStress" : resultMotorChain.radialStress,
+                "vonMisesStress": resultMotorChain.vonMisesSress,
+                "nozzleReinforcementThickness": resultMotorChain.nozzleReinforcementThickness
                 }    
 
 def checkIfIsThinVessel(motorChain, calculationType = Enums.CalculationType.SAFETY_MARGIN):

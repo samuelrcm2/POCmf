@@ -55,6 +55,8 @@ class ThickVessel (MotorChain):
         self.calculateCircumferentialStress()
         self.calculateLongitudinalStress()
         self.calculateMaxRadialStress()
+        self.calculateVonMisesStress()
+        self.calculateNozzleReinforcementThickness()
 
     
     def calculateMaxRadialStressByExternalRadius(self, externalRadius):

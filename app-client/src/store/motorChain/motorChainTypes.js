@@ -95,13 +95,3 @@ export const CalculationTypes = {
   THICKNESS: 1,
   MAIN_STRESSES: 2,
 };
-
-export const nameTranslations = {
-  admissiveStress: "Admissive Stress",
-  longitudinalStress: "Longitudinal Stress",
-  circumferentialStress: "Circumferential Stress",
-  radialStress: "Radial Stress",
-  SM: "Safety Margin",
-  thickness: "Thicknesss",
-  maxStressSupported: "Screw Maximum Stress Supported",
-};

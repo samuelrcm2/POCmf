@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 //Third Part Libraries
 import { isNilOrEmpty } from "ramda-adjunct";
-import { nameTranslations } from "../../store/motorChain/motorChainTypes";
+import { nameTranslations, unitTranslation } from "../Generic/Util";
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -52,7 +52,7 @@ const CalculatedData = (props) => {
                 {nameTranslations[row.name]}
               </StyledTableCell>
               <StyledTableCell align="right">{parseFloat(
-                  row.value.toFixed(3))}</StyledTableCell>
+                  row.value.toFixed(3)) + ' '  + unitTranslation[row.name]}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>

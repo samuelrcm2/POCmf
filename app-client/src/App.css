@@ -40,7 +40,16 @@ body {
   padding: 0;
   background-color: #292929;
 }
-
+h1 {
+  font-size: 2.5em;
+}
+p {
+  font-size: 1.3em;
+}
+a {
+  font-size: 1em;
+  color: lightblue;
+}
 /* use viewport-relative units to cover page fully */
 body {
   height: 100vh;

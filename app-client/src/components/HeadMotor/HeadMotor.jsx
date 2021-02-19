@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-//CSS
-import Paper from "@material-ui/core/Paper";
 
 import { isNilOrEmpty } from "ramda-adjunct";
 

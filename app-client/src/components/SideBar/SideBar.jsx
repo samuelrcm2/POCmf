@@ -7,8 +7,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import MenuIcon from "@material-ui/icons/Menu";
 
 const useStyles = makeStyles({
@@ -20,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TemporaryDrawer() {
+const TemporaryDrawer = (props) => {
   const classes = useStyles();
   const [state, setState] = React.useState({
     isOpem: false,
@@ -34,14 +33,18 @@ export default function TemporaryDrawer() {
       onKeyDown={() => setState({ ...state, isOpem: false })}
     >
       <List>
-        {["About the Software"].map((text, index) => (
-          <ListItem button key={text}>
+          <ListItem button key={"POCmf"} onClick={() => props.setPage(1)}>
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary={"POCmf"} />
+          </ListItem>
+          <ListItem button key={"About the Software"} onClick={() => props.setPage(2)}>
             <ListItemIcon>
               <HelpIcon />
             </ListItemIcon>
-            <ListItemText primary={text} />
+            <ListItemText primary={"About the Software"} />
           </ListItem>
-        ))}
       </List>
     </div>
   );
@@ -49,7 +52,7 @@ export default function TemporaryDrawer() {
   return (
     <div>
       <Button onClick={() => setState({ ...state, isOpem: true })}>
-        <MenuIcon />
+        <MenuIcon style={{ color: "white"}}/>
       </Button>
       <Drawer
         open={state.isOpem}
@@ -60,3 +63,5 @@ export default function TemporaryDrawer() {
     </div>
   );
 }
+
+export default TemporaryDrawer;

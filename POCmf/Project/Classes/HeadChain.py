@@ -33,7 +33,7 @@ class HeadChain(ProjectHandler) :
     def calculateMaxForce(self):
         self.maxForce = math.pi * (self.internalRadius ** 2) * self.workPressure
 
-    def defineDiametersByMinimumDiameter(self, minimumDiameter):
+    def defineDiametersByMinimumDiameter(self, internalradius):
         self.selectedMinorDiameter = minimumDiameter if minimumDiameter > self.internalRadius and \
             minimumDiameter > self.screwPattern.minMinorDiameter else self.screwPattern.minMinorDiameter
         self.selectedMajorDiameter = self.selectedMinorDiameter + 0.69717 * self.cogHeight

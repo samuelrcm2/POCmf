@@ -1,5 +1,5 @@
-import React from "react";
-import { Provider } from "react-redux";
+import React, { useState} from "react";
+import { Provider} from "react-redux";
 import SideBar from "./components/SideBar/SideBar";
 import MotorChainComponent from "./components/MotorChain/MotorChain";
 import HeadMotorComponent from "./components/HeadMotor/HeadMotor";
@@ -10,8 +10,9 @@ import { MotorChain } from "./store/motorChain/motorChainTypes";
 import store from "./store/store";
 import Loader from "./components/Generic/Loader";
 import GenericAlert from "./components/Generic/Alert";
-import "./App.css";
+import AboutPage from  "./components/AboutPage/AboutPage"
 
+import "./App.css";
 import Grid from "@material-ui/core/Grid";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
@@ -75,7 +76,8 @@ function TabPanel(props) {
 }
 
 const App = () => {
-  const [appBarValue, setAppBarValue] = React.useState(0);
+  const [page, setChosenPage] = useState(1);
+  const [appBarValue, setAppBarValue] = useState(0);
   const classes = useStyles();
   const a11yProps = (index) => {
     return {
@@ -87,15 +89,13 @@ const App = () => {
   const handleChange = (_, newValue) => {
     setAppBarValue(newValue);
   };
-
-  return (
-    <div className="Main">
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <Loader>
-            <SideBar />
-            <div className="App-Body" >
-              <div className="Motor-View">
+  const setContent = () => {
+    if (page === 2)
+      return  (<div className="App-Body" > <AboutPage /> </div>)
+    
+    return (
+      <div className="App-Body" >
+<div className="Motor-View">
                 <MotorView />
               </div>
               <div className="Form-Tabs">
@@ -134,7 +134,17 @@ const App = () => {
                 </TabPanel>
                 <CalculatedDataComponent />
               </div>
-            </div>
+              </div>
+    )
+  }
+
+  return (
+    <div className="Main">
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <Loader>
+            <SideBar setPage={(value) => setChosenPage(value)} />
+              {setContent()}
             <GenericAlert />
           </Loader>
         </ThemeProvider>
