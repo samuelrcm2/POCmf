@@ -1,5 +1,6 @@
 from Project.Domain import MaterialsDomain
 from Project.Classes.ProjectHandler import ProjectHandler
+from Project.Classes.HeatEffect import HeatEffect
 import math
 
 class MotorChain (ProjectHandler):
@@ -17,6 +18,8 @@ class MotorChain (ProjectHandler):
         self.radialStress: float = motorChain['radialStress']
         self.vonMisesSress: float = None
         self.nozzleReinforcementThickness: float = None
+        self.hasAditionalHeatStress: bool = motorChain['temperatureVariation'] is not None
+        self.additionalHeatStress: HeatEffect = HeatEffect(motorChain['temperatureVariation']) if motorChain['temperatureVariation'] is not None else None
 
     def __str__(self):
         return f"Motor chain properties: \n \
