@@ -18,6 +18,8 @@ export class MotorChain {
   longitudinalStress;
   circumferentialStress;
   radialStress;
+  hasAditionalHeatStress;
+  temperatureVariation;
   constructor(motorChain) {
     this.internalRadius = motorChain
       ? motorChain.internalRadius
@@ -49,7 +51,7 @@ export class MotorChain {
         ? motorChain.materialId
         : ""
       : "";
-    this.admissiveStress = motorChain
+      this.admissiveStress = motorChain
       ? motorChain.admissiveStress
         ? motorChain.admissiveStress
         : null
@@ -69,6 +71,12 @@ export class MotorChain {
         ? motorChain.radialStress
         : null
       : null;
+    this.hasAditionalHeatStress = false;
+    this.temperatureVariation = motorChain
+    ? motorChain.temperatureVariation
+      ? motorChain.temperatureVariation
+      : null
+    : null;
   }
 }
 
@@ -87,11 +95,12 @@ export const MotorChainActionsType = {
   LONGITUDINAL_STRESS_SETTED: "LONGITUDINAL_STRESS_SETTED",
   CIRCUNFERENTIAL_STRESS_SETTED: "CIRCUNFERENTIAL_STRESS_SETTED",
   RADIAL_STRESS_SETTED: "RADIAL_STRESS_SETTED",
+  TEMPERATURE_VARIATION_SETTED: "TEMPERATURE_VARIATION_SETTED",
+  HAS_ADDITIONAL_STRESS_SETTED: "HAS_ADDITIONAL_STRESS_SETTED",
   BUTTON_STATE_SETTED: "BUTTON_STATE_SETTED",
 };
 
 export const CalculationTypes = {
   SAFETY_MARGIN: 0,
   THICKNESS: 1,
-  MAIN_STRESSES: 2,
 };

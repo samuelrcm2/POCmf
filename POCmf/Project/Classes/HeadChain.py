@@ -33,7 +33,7 @@ class HeadChain(ProjectHandler) :
     def calculateMaxForce(self):
         self.maxForce = math.pi * (self.internalRadius ** 2) * self.workPressure
 
-    def defineDiametersByMinimumDiameter(self, internalradius):
+    def defineDiametersByMinimumDiameter(self, minimumDiameter):
         self.selectedMinorDiameter = minimumDiameter if minimumDiameter > self.internalRadius and \
             minimumDiameter > self.screwPattern.minMinorDiameter else self.screwPattern.minMinorDiameter
         self.selectedMajorDiameter = self.selectedMinorDiameter + 0.69717 * self.cogHeight
@@ -41,7 +41,7 @@ class HeadChain(ProjectHandler) :
             raise Exception("The thickness defined cannot be used to the pitch choosed. PLease define a thicker veise or e smaller pitch.")
 
     def defineIfScrewPatternIsPossible(self):
-        if (self.selectedMajorDiameter > (self.internalRadius + self.thickness)):
+        if (self.selectedMajorDiameter > ((self.internalRadius + self.thickness)*2)):
             return False
         if (self.cogHeight > self.thickness): 
             return False
@@ -55,7 +55,7 @@ class HeadChain(ProjectHandler) :
         newHeadChain = cls(headChain)
         newHeadChain.getYeldStrength()
         newHeadChain.calculateCogHeight(newHeadChain.screwPattern.pitch)
-        newHeadChain.defineDiametersByMinimumDiameter(newHeadChain.internalRadius)
+        newHeadChain.defineDiametersByMinimumDiameter(newHeadChain.internalRadius * 2)
         newHeadChain.calculatePrimitiveDiameter()
         newHeadChain.calculateMaxPressureSupported()
         return newHeadChain.maxPressureSupported

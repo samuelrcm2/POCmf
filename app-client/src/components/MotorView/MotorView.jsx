@@ -768,6 +768,7 @@ class MotorView extends Component {
   render() {
     const { classes } = this.props;
     this.createMotorDraw();
+    if (!this.checkIfHasData()) return null
     return (
       <div>
         <Grid

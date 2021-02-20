@@ -67,10 +67,16 @@ const CalculatedData = (props) => {
     return null;
   return (
     <div className="Calculos-Table">
+    {!isNilOrEmpty(motorChainCalculatedData) &&
+    <>
     <h3>Motor Chain</h3>
       {generateCalculosTable(motorChainCalculatedData)}
+    </>}
+    {!isNilOrEmpty(headMotorCalculatedData) &&
+    <>
     <h3>Motor Head</h3>
       {generateCalculosTable(headMotorCalculatedData)}
+    </>}
     </div>  
     );
 };

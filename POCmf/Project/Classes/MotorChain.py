@@ -18,7 +18,7 @@ class MotorChain (ProjectHandler):
         self.radialStress: float = motorChain['radialStress']
         self.vonMisesSress: float = None
         self.nozzleReinforcementThickness: float = None
-        self.hasAditionalHeatStress: bool = motorChain['temperatureVariation'] is not None
+        self.hasAditionalHeatStress: bool = motorChain['hasAditionalHeatStress']
         self.additionalHeatStress: HeatEffect = HeatEffect(motorChain['temperatureVariation']) if motorChain['temperatureVariation'] is not None else None
 
     def __str__(self):
@@ -32,23 +32,23 @@ class MotorChain (ProjectHandler):
             Longitudinal Stress: {self.longitudinalStress} MPa \
             "
         
-    def calculateAdmissiveStress (self):
-        # According to Huzel e Huang (1992, pág. 289)
-        material = \
-            MaterialsDomain.Materials.getMaterialById(self.materialId)
-        try:
-            fy = material['yeldStrength']/1.25
-            fu = material['ultimateStrength']/1.5
-        except:
-            print('Material not Found!')
-        else:
-            self.admissiveStress = fy if fy < fu else fu
-        
     def calculateVonMisesStress (self):
-        s_1 = self.circumferentialStress
-        s_2 = self.longitudinalStress
-        s_3 = self.radialStress
+        s_1 = self.circumferentialStress + self.additionalHeatStress.circumferentialStress if self.hasAditionalHeatStress else self.circumferentialStress
+        s_2 = self.longitudinalStress + self.additionalHeatStress.longitudinalStress if self.hasAditionalHeatStress else self.longitudinalStress
+        s_3 = self.radialStress + self.additionalHeatStress.radialStress if self.hasAditionalHeatStress else self.radialStress
         self.vonMisesSress = (((s_1 - s_2)**2 + (s_2 - s_3)**2 + (s_1 - s_3)**2)/2) ** 0.5
 
     def calculateNozzleReinforcementThickness (self):
         self.nozzleReinforcementThickness = 2.5 * self.thickness
+
+    def calculateAdditionHeatStress (self):
+        material = \
+            MaterialsDomain.Materials.getMaterialById(self.materialId)
+        self.calculateHeatMaxRadialStress(material)
+        self.calculateHeatLongitudinalStress(material)
+        self.calculateHeatCircumferentialStress(material)
+
+    def calculateSM(self):
+        material = \
+            MaterialsDomain.Materials.getMaterialById(self.materialId)
+        self.SM = material['yeldStrength']/self.vonMisesSress

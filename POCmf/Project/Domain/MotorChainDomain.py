@@ -8,21 +8,24 @@ def handleMotorChainCalculationTypes (motorChain, calculationType):
 
     if calculationType == Enums.CalculationType.SAFETY_MARGIN:
         resultMotorChain = newMotorChain.motorChainSMCalculation(motorChain)
-        return {"SM": resultMotorChain.SM}
-    elif calculationType == Enums.CalculationType.THICKNESS:
-        resultMotorChain = newMotorChain.motorChainThicknessCalculation(motorChain)
-        if resultMotorChain.thickness / resultMotorChain.internalRadius > 0.1:
-            resultMotorChain = ThickVessel.motorChainThicknessCalculation(motorChain)
-        return { "thickness": resultMotorChain.thickness}
-    else :
-        resultMotorChain = newMotorChain.motorChainStressesCalculation(motorChain)
         return {
                 "circumferentialStress" : resultMotorChain.circumferentialStress,
                 "longitudinalStress" : resultMotorChain.longitudinalStress,
                 "radialStress" : resultMotorChain.radialStress,
                 "vonMisesStress": resultMotorChain.vonMisesSress,
-                "nozzleReinforcementThickness": resultMotorChain.nozzleReinforcementThickness
+                "nozzleReinforcementThickness": resultMotorChain.nozzleReinforcementThickness,
+                "heatAdditionlaCircumferentialStress" : resultMotorChain.additionalHeatStress.circumferentialStress if resultMotorChain.hasAditionalHeatStress else None,
+                "heatAdditionlaLongitudinalStress" : resultMotorChain.additionalHeatStress.longitudinalStress if resultMotorChain.hasAditionalHeatStress else None,
+                "heatAdditionlaRadialStress" : resultMotorChain.additionalHeatStress.radialStress if resultMotorChain.hasAditionalHeatStress else None,
+                "SM": resultMotorChain.SM
                 }    
+    if calculationType == Enums.CalculationType.THICKNESS:
+        resultMotorChain = newMotorChain.motorChainThicknessCalculation(motorChain)
+        if resultMotorChain.thickness / resultMotorChain.internalRadius > 0.1:
+            resultMotorChain = ThickVessel.motorChainThicknessCalculation(motorChain, resultMotorChain.thickness )
+        return { "thickness": resultMotorChain.thickness}
+
+
 
 def checkIfIsThinVessel(motorChain, calculationType = Enums.CalculationType.SAFETY_MARGIN):
     return motorChain["thickness"] / motorChain["internalRadius"] < 0.1 if calculationType != Enums.CalculationType.THICKNESS \

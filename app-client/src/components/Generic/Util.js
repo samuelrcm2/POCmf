@@ -7,7 +7,10 @@ export const nameTranslations = {
     thickness: "Thicknesss",
     maxStressSupported: "Screw Maximum Stress Supported",
     vonMisesStress: "Von Mises Stress",
-    nozzleReinforcementThickness: "Nozzle Reinforcement Thickness"
+    nozzleReinforcementThickness: "Nozzle Reinforcement Thickness",
+    heatAdditionlaCircumferentialStress: "Thermical Circumferential Stress",
+    heatAdditionlaLongitudinalStress: "Thermical Longitudinal Stress",
+    heatAdditionlaRadialStress: "Thermical Radial Stress"
   };
 
 export const unitTranslation = {
@@ -19,7 +22,10 @@ export const unitTranslation = {
     thickness: "mm",
     maxStressSupported: "MPa",
     vonMisesStress: "MPa",
-    nozzleReinforcementThickness: "mm"
+    nozzleReinforcementThickness: "mm",
+    heatAdditionlaCircumferentialStress: "MPa",
+    heatAdditionlaLongitudinalStress: "MPa",
+    heatAdditionlaRadialStress: "MPa"
 }
 
 export const FormatCalculosResponse = calc => {

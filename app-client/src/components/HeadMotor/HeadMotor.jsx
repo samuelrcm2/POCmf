@@ -6,7 +6,6 @@ import { isNilOrEmpty } from "ramda-adjunct";
 
 import * as headMotorActions from "../../store/HeadMotor/HeadMotorActions";
 import { ScrewPattern } from "../../store/HeadMotor/HeadMotorTypes";
-import useStyles from "./HeadMotorStyle";
 import FormBuilder from "../Generic/FormBuilder/FormBuilder";
 const HeadMotor = (props) => {
   const {
@@ -22,7 +21,6 @@ const HeadMotor = (props) => {
     screwPatternsByDiameter,
   } = props;
 
-  const classes = useStyles();
   const [messageError, setMessageError] = useState("");
   const [buttonIsDisabled, setButtonState] = useState(true);
   const [isCreatedPattern, setSwitchState] = useState(false);

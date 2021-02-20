@@ -1,5 +1,4 @@
 from Project.Classes.HeadChain import HeadChain
 
 def defineScrewBySelectedScrew (headMotor):
-    newHeadMotor = HeadChain.defineScrewBySelectedScrew(headMotor)
-    return {"maxStressSupported": newHeadMotor}
+    return {"maxStressSupported": HeadChain.defineScrewBySelectedScrew(headMotor)}

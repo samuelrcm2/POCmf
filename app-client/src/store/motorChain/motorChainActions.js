@@ -124,8 +124,21 @@ export const setRadialStress = (value) => {
   };
 };
 
+export const setTemperatureVariation = (value) => {
+  return {
+    type: MotorChainActionsType.TEMPERATURE_VARIATION_SETTED,
+    payload: Number(value),
+  };
+};
+
+export const setHasAdditionalStress = (value) => {
+  return {
+    type: MotorChainActionsType.HAS_ADDITIONAL_STRESS_SETTED
+  };
+};
 export const setButtonState = () => {
   return {
     type: MotorChainActionsType.BUTTON_STATE_SETTED,
   };
 };
+

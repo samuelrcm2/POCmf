@@ -96,6 +96,22 @@ const reducer = (state = INITIAL_STATE, action) => {
           radialStress: action.payload,
         },
       };
+    case MotorChainActionsType.TEMPERATURE_VARIATION_SETTED:
+      return {
+        ...state,
+        motorChain: {
+          ...state.motorChain,
+          temperatureVariation: action.payload
+        }
+      }
+    case MotorChainActionsType.HAS_ADDITIONAL_STRESS_SETTED:
+      return {
+        ...state,
+        motorChain: {
+          ...state.motorChain,
+          hasAditionalHeatStress: !state.motorChain.hasAditionalHeatStress
+        }
+      }
     case MotorChainActionsType.BUTTON_STATE_SETTED:
       return {
         ...state,

@@ -6,9 +6,9 @@ class ThinVessel(MotorChain):
             (self.workPressure * self.internalRadius) / self.thickness
 
     def calculateHeatCircumferentialStress (self, material):
-        E = material.elasticityModule
-        a = material.thermalExpansioCoeficient
-        v = material.poissonRatio
+        E = material['elasticityModule']
+        a = material['thermalExpansioCoeficient']
+        v = material['poissonRatio']
         dT = self.additionalHeatStress.temperatureVariation
         self.additionalHeatStress.circumferentialStress = (E*a*dT)/(2*(1-v))
 
@@ -23,49 +23,27 @@ class ThinVessel(MotorChain):
             (self.workPressure * self.internalRadius) / (2 * self.thickness)
 
     def calculateHeatLongitudinalStress (self, material):
-        E = material.elasticityModule
-        a = material.thermalExpansioCoeficient
-        v = material.poissonRatio
+        E = material['elasticityModule']
+        a = material['thermalExpansioCoeficient']
+        v = material['poissonRatio']
         dT = self.additionalHeatStress.temperatureVariation
-        self.additionalHeatStress.circumferentialStress = (E*a*dT)/(2*(1-v))
-
-    def calculateCircumferentialStress (self):
-        self.circumferentialStress  = \
-            (self.workPressure * self.internalRadius) / self.thickness
-
-    def calculateMaxRadialStress (self):
-        self.radialStress = 0
-
-    def calculateLongitudinalStress (self):
-        self.longitudinalStress = \
-            (self.workPressure * self.internalRadius) / (2 * self.thickness)
+        self.additionalHeatStress.longitudinalStress = (E*a*dT)/(2*(1-v))
 
     def calculateThickness (self):
-        thicknessByFirstMethod = \
-            (self.workPressure * self.internalRadius) / self.circumferentialStress
-        thicknessBySecondMethod = \
-            (self.workPressure * self.internalRadius) / (2 * self.longitudinalStress)
-
-        self.thickness = thicknessByFirstMethod if \
-            thicknessByFirstMethod < thicknessBySecondMethod \
-            else thicknessBySecondMethod
-            
-    
-    def calculateAdditionHeatStress (self):
-        material = \
-            MaterialsDomain.Materials.getMaterialById(self.materialId)
-        self.calculateHeatMaxRadialStress(material)
-        self.calculateLongitudinalStress(material)
-        self.calculateHeatCircumferentialStress(material)
-
-    def calculateSM (self): #MODIFICAR
-        arrayOfStresses = [self.longitudinalStress, self.circumferentialStress, self.radialStress]
-        self.SM = self.admissiveStress / max(arrayOfStresses)
+        sigma_c = self.circumferentialStress + self.additionalHeatStress.circumferentialStress if self.hasAditionalHeatStress else self.circumferentialStress
+        sigma_l = self.longitudinalStress + self.additionalHeatStress.longitudinalStress if self.hasAditionalHeatStress else self.longitudinalStress
+        thicknessByMethods = [
+            (self.workPressure * self.internalRadius) / sigma_c,
+            (self.workPressure * self.internalRadius) / (2 * sigma_l)
+        ]
+        self.thickness = max(thicknessByMethods)
         
     def calculatePrincipalStresses (self):
         self.calculateCircumferentialStress()
         self.calculateLongitudinalStress()
         self.calculateMaxRadialStress()
+        self.calculateVonMisesStress()
+        self.calculateNozzleReinforcementThickness()
         if self.hasAditionalHeatStress:
             self.calculateAdditionHeatStress()
 
@@ -73,7 +51,6 @@ class ThinVessel(MotorChain):
     def motorChainSMCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
         newMotorChain.calculatePrincipalStresses()
-        newMotorChain.calculateAdmissiveStress()
         newMotorChain.calculateSM()
         return newMotorChain
     
@@ -82,11 +59,4 @@ class ThinVessel(MotorChain):
     def motorChainThicknessCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
         newMotorChain.calculateThickness()
-        return newMotorChain
-    
-
-    @classmethod
-    def motorChainStressesCalculation(cls, motorChain):
-        newMotorChain = cls(motorChain)
-        newMotorChain.calculatePrincipalStresses()
         return newMotorChain

@@ -128,11 +128,7 @@ function MotorChainInfo(props) {
           {
             id: CalculationTypes.THICKNESS,
             name: "Thickness",
-          },
-          {
-            id: CalculationTypes.MAIN_STRESSES,
-            name: "Main Stresses",
-          },
+          }
         ],
       },
       {
@@ -223,9 +219,32 @@ function MotorChainInfo(props) {
           calculationType !== CalculationTypes.MAIN_STRESSES &&
           checkIfMotorNeedRadiusStressField(),
       },
+      {
+        type: "TextField",
+        id: "mc-temperature-variation",
+        label: "Temperature Variation (K)",
+        inputType: "number",
+        defaultValue: motorChain.temperatureVariation,
+        onChange: (value) => props.setTemperatureVariation(value),
+        hasTooltip: true,
+        tooltip: {
+          message:
+            "Insert the expected temperature in the inside part for the chaimber",
+          placeholder: "bottom",
+        },
+        isVisible: motorChain.hasAditionalHeatStress,
+      },
     ],
-    hasSwitch: false,
+    hasSwitch: true,
     hasButtom: true,
+    switch: {
+      checked: motorChain.hasAditionalHeatStress,
+      onChange: (value) => props.setHasAdditionalStress(value),
+      name: "checkedB",
+      label: "Consider Thermal Effects",
+      tooltipTitle: "Set the temperature considered for the motor chain's internal shell.",
+      tooltipPlaceholder: "bottom",
+    },
     bottom: {
       disabled: buttonIsDisabled,
       label: "Calculate",
@@ -234,7 +253,7 @@ function MotorChainInfo(props) {
       tooltipPlaceholder: "bottom",
     },
   };
-  console.log(Form);
+
   return (
       <div className="Form-Base-Paper">
             <FormBuilder formProps={Form} />

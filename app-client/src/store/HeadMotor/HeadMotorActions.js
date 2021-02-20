@@ -1,4 +1,5 @@
 import api from "../../Services/api";
+import { FormatCalculosResponse } from "../../components/Generic/Util"
 import { HeadMotorActionsType } from "./HeadMotorTypes";
 import { changeGenericAlert } from "../Alert/alertActions";
 import store from "../store";
@@ -23,7 +24,7 @@ export const calculateScrewMaxStress = (headMotor) => {
   return (dispatch) => {
     api.post("/headMotor/maxScrewStress/", headMotor).then((response) => {
       if (response) {
-        dispatch(setScrewMaxStress(response.data));
+        dispatch(setScrewMaxStress(FormatCalculosResponse(response.data)));
         dispatch(
           changeGenericAlert("Properties calculated successfully", "success")
         );

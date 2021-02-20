@@ -1,4 +1,6 @@
 from Project.Classes.MotorChain import MotorChain
+import math
+from scipy import optimize
 
 ACCEPTABLE_ERROR = 0.0001
 
@@ -10,13 +12,15 @@ class ThickVessel (MotorChain):
         self.circumferentialStress = p * ((ri ** 2) / (re ** 2 - ri ** 2 )) \
             * (1 + (re ** 2)/(ri ** 2))
 
-
-    def calculateLongitudinalStress (self):
-        p = self.workPressure
+    def calculateHeatCircumferentialStress (self, material):
+        E = material['elasticityModule']
+        a = material['thermalExpansioCoeficient']
+        v = material['poissonRatio']
         ri = self.internalRadius
-        re = self.internalRadius + self.thickness
-        self.longitudinalStress = (p * ri ** 2)/((re ** 2)- (ri ** 2))
-
+        re = ri + self.thickness
+        dT = self.additionalHeatStress.temperatureVariation
+        self.additionalHeatStress.circumferentialStress = (E*a*dT)/(2*(1-v))  \
+            * ((2*(re/ri) ** 2)/(-1 + (re/ri) ** 2) - (1/math.log(re/ri)))
 
     def calculateMaxRadialStress (self):
         p = self.workPressure
@@ -25,66 +29,54 @@ class ThickVessel (MotorChain):
         self.radialStress = p * ((ri ** 2) / (re ** 2 - ri ** 2 )) \
             * (1 - (re ** 2)/(ri ** 2))
 
+    def calculateHeatMaxRadialStress (self, material):
+        self.additionalHeatStress.radialStress = 0
 
-    def calculateThickness (self):
+
+    def calculateLongitudinalStress (self):
+        p = self.workPressure
+        ri = self.internalRadius
+        re = self.internalRadius + self.thickness
+        self.longitudinalStress = (p * ri ** 2)/((re ** 2)- (ri ** 2))
+
+    def calculateHeatLongitudinalStress (self, material):
+        E = material['elasticityModule']
+        a = material['thermalExpansioCoeficient']
+        v = material['poissonRatio']
+        ri = self.internalRadius
+        re = ri + self.thickness
+        dT = self.additionalHeatStress.temperatureVariation
+        self.additionalHeatStress.longitudinalStress = (E*a*dT)/(2*(1-v))  \
+            * ((2*(re/ri) ** 2)/(-1 + (re/ri) ** 2) - (1/math.log(re/ri)))
+
+    def calculateThickness (self, initialThicknessValue):
         #Using Newton's Method
-        radiusAdd = 1
-        estimatedExternalRadius = self.internalRadius + radiusAdd
-        radialStress: float 
-        while True:
-            if estimatedExternalRadius > self.internalRadius :
-                radialStress = self.calculateMaxRadialStressByExternalRadius(estimatedExternalRadius)
-                derivativeRadialStress = self.calculateMaxRadialStressDerivativeByExternalRadius(estimatedExternalRadius)
-                estimatedExternalRadius -= radialStress/derivativeRadialStress
-            else:
-                radiusAdd = radiusAdd/2
-                estimatedExternalRadius = self.internalRadius + radiusAdd
-                continue 
-
-            if radiusAdd < 0.02:
-                raise Exception('The value for Radial Stress cannot be real for the internal radius selected')
-            if self.radialStress - self.calculateMaxRadialStressByExternalRadius(estimatedExternalRadius) < ACCEPTABLE_ERROR:
-                break
-        self.thickness = estimatedExternalRadius - self.internalRadius
-            
-
-    def calculateSM (self):
-        self.SM = self.admissiveStress / (self.circumferentialStress - self.radialStress)
+        externalRadius = optimize.newton(self.calculateMaxCircunferentialStressByExternalRadius, (initialThicknessValue + self.internalRadius))
+        self.thickness = externalRadius - self.internalRadius
 
     def calculatePrincipalStresses (self):
         self.calculateCircumferentialStress()
         self.calculateLongitudinalStress()
         self.calculateMaxRadialStress()
-        self.calculateVonMisesStress()
         self.calculateNozzleReinforcementThickness()
+        if self.hasAditionalHeatStress:
+            self.calculateAdditionHeatStress()
 
+        self.calculateVonMisesStress()
     
-    def calculateMaxRadialStressByExternalRadius(self, externalRadius):
-        return self.workPressure * ((self.internalRadius ** 2 + externalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) 
-
-
-    def calculateMaxRadialStressDerivativeByExternalRadius(self, externalRadius):
-        return -4 * self.workPressure * (( externalRadius * self.internalRadius ** 2 ) / (externalRadius ** 2 - self.internalRadius ** 2 )**2) 
-
+    def calculateMaxCircunferentialStressByExternalRadius(self, externalRadius):
+        return (self.workPressure * ((self.internalRadius ** 2 + externalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) ) - self.circumferentialStress
 
     @classmethod
     def motorChainSMCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
         newMotorChain.calculatePrincipalStresses()
-        newMotorChain.calculateAdmissiveStress()
         newMotorChain.calculateSM()
         return newMotorChain
     
 
     @classmethod
-    def motorChainThicknessCalculation(cls, motorChain):
+    def motorChainThicknessCalculation(cls, motorChain, initialThicknessValue):
         newMotorChain = cls(motorChain)
-        newMotorChain.calculateThickness()
-        return newMotorChain
-    
-
-    @classmethod
-    def motorChainStressesCalculation(cls, motorChain):
-        newMotorChain = cls(motorChain)
-        newMotorChain.calculatePrincipalStresses()
+        newMotorChain.calculateThickness(initialThicknessValue)
         return newMotorChain
