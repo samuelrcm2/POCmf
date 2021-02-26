@@ -129,6 +129,24 @@ const reducer = (state = INITIAL_STATE, action) => {
           afterScrewHeight: action.payload,
         },
       };
+    case MotorNozzleActionsType.HM_SCREW_PATTERN_COPIED:
+      return {
+        ...state,
+        motorNozzle: {
+          ...state.motorNozzle,
+          afterScrewHeight: action.payload.headMotor.afterScrewHeight,
+          thickness: action.payload.headMotor.thickness,
+          internalMinorRadius: action.payload.headMotor.internalMinorRadius,
+          internalMajorRadius: action.payload.headMotor.internalRadius,
+          maxMajorDiameter: action.payload.headMotor.maxMajorDiameter,
+          minMajorDiameter: action.payload.headMotor.minMajorDiameter,
+          maxMinorDiameter: action.payload.headMotor.maxMinorDiameter,
+          screwPattern: action.payload.headMotor.screwPattern,
+          externalHeight: action.payload.headMotor.externalHeadHeight,
+          internalHeight: action.payload.headMotor.internalHeadHeight,
+          screwHeight: action.payload.headMotor.screwHeight
+        }
+      } 
     default:
       return { ...state };
   }

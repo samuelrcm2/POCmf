@@ -39,7 +39,7 @@ const setMotorChainProps = (motorChainProps) => {
     if (
       store.getState().motorChain.calculationType === CalculationTypes.THICKNESS
     )
-      dispatch(setThickness(motorChainProps.thickness));
+      dispatch(setThickness(motorChainProps.find(p => p.name === "thickness")?.value));
     dispatch({
       type: MotorChainActionsType.MOTORCHAIN_PROPS_SETTED,
       payload: motorChainProps,

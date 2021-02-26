@@ -72,42 +72,11 @@ function MotorChainInfo(props) {
       SetButtonState(true);
       return;
     }
-
-    if (calculationType !== CalculationTypes.MAIN_STRESSES) {
-      if (
-        isNilOrEmpty(motorChain.longitudinalStress) ||
-        isNilOrEmpty(motorChain.circumferentialStress)
-      ) {
-        setMessageError("Please, fill the Stresses field.");
-        SetButtonState(true);
-        return;
-      }
-      if (
-        checkIfMotorNeedRadiusStressField() &&
-        isNilOrEmpty(motorChain.radialStress)
-      ) {
-        setMessageError("Please, fill the Radial Stress field.");
-        SetButtonState(true);
-        return;
-      }
-    }
     SetButtonState(false);
     setMessageError("");
   };
   const SetButtonState = (newState) => {
     if (newState !== buttonIsDisabled) setButtonState();
-  };
-  const checkIfMotorNeedRadiusStressField = () => {
-    if (calculationType === CalculationTypes.THICKNESS) return true;
-    if (
-      isNilOrEmpty(motorChain.thickness) ||
-      isNilOrEmpty(motorChain.internalRadius)
-    )
-      return false;
-    if (motorChain.thickness === 0 || motorChain.internalRadius === 0)
-      return false;
-
-    return motorChain.thickness / motorChain.internalRadius > 0.1;
   };
   const Form = {
     forms: [
@@ -120,6 +89,8 @@ function MotorChainInfo(props) {
         onChange: (value) => props.setCalculationType(value),
         hasTooltip: false,
         isVisible: true,
+        error: false,
+        helperText: "",
         selectOptions: [
           {
             id: CalculationTypes.SAFETY_MARGIN,
@@ -140,6 +111,8 @@ function MotorChainInfo(props) {
         onChange: (value) => props.setRadius(value),
         hasTooltip: false,
         isVisible: true,
+        error: false,
+        helperText: "",
       },
       {
         type: "TextField",
@@ -150,6 +123,8 @@ function MotorChainInfo(props) {
         onChange: (value) => props.setHeight(value),
         hasTooltip: false,
         isVisible: true,
+        error: false,
+        helperText: "",
       },
       {
         type: "TextField",
@@ -160,6 +135,8 @@ function MotorChainInfo(props) {
         onChange: (value) => props.setThickness(value),
         hasTooltip: false,
         isVisible: calculationType !== CalculationTypes.THICKNESS,
+        error: false,
+        helperText: "",
       },
       {
         type: "TextField",
@@ -170,6 +147,8 @@ function MotorChainInfo(props) {
         onChange: (value) => props.setWorkPressure(value),
         hasTooltip: false,
         isVisible: true,
+        error: false,
+        helperText: "",
       },
       {
         type: "Select",
@@ -181,43 +160,8 @@ function MotorChainInfo(props) {
         hasTooltip: false,
         isVisible: true,
         selectOptions: materials,
-      },
-      {
-        type: "TextField",
-        id: "mc-longitudinal-stress",
-        label: "Longitudinal Stress (MPa)",
-        inputType: "number",
-        defaultValue: motorChain.longitudinalStress,
-        onChange: (value) => props.setLongitudinalStress(value),
-        hasTooltip: false,
-        isVisible: calculationType !== CalculationTypes.MAIN_STRESSES,
-      },
-      {
-        type: "TextField",
-        id: "mc-circunferential-stress",
-        label: "Circunferential Stress (MPa)",
-        inputType: "number",
-        defaultValue: motorChain.circumferentialStress,
-        onChange: (value) => props.setCircunferentialStress(value),
-        hasTooltip: false,
-        isVisible: calculationType !== CalculationTypes.MAIN_STRESSES,
-      },
-      {
-        type: "TextField",
-        id: "mc-radial-stress",
-        label: "Radial Stress (MPa)",
-        inputType: "number",
-        defaultValue: motorChain.radialStress,
-        onChange: (value) => props.setRadialStress(value),
-        hasTooltip: true,
-        tooltip: {
-          message:
-            "Only has to add a Radial Stress when the ratio Thickness/External Raidus is greater than 0.1",
-          placeholder: "bottom",
-        },
-        isVisible:
-          calculationType !== CalculationTypes.MAIN_STRESSES &&
-          checkIfMotorNeedRadiusStressField(),
+        error: false,
+        helperText: "",
       },
       {
         type: "TextField",
@@ -233,18 +177,20 @@ function MotorChainInfo(props) {
           placeholder: "bottom",
         },
         isVisible: motorChain.hasAditionalHeatStress,
+        error: false,
+        helperText: "",
       },
     ],
     hasSwitch: true,
     hasButtom: true,
-    switch: {
+    switch: [{
       checked: motorChain.hasAditionalHeatStress,
       onChange: (value) => props.setHasAdditionalStress(value),
       name: "checkedB",
       label: "Consider Thermal Effects",
       tooltipTitle: "Set the temperature considered for the motor chain's internal shell.",
       tooltipPlaceholder: "bottom",
-    },
+    }],
     bottom: {
       disabled: buttonIsDisabled,
       label: "Calculate",

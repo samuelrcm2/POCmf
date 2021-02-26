@@ -2,19 +2,16 @@ import React, { useEffect, useState } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
-import Paper from "@material-ui/core/Paper";
-
 import { isNilOrEmpty } from "ramda-adjunct";
 import * as MotorNozzleActions from "../../store/MotorNozzle/MotorNozzleActions";
 import { ScrewPattern } from "../../store/HeadMotor/HeadMotorTypes";
-import useStyles from "./MotorNozzleStyle";
 import FormBuilder from "../Generic/FormBuilder/FormBuilder";
 
 const MotorNozzle = (props) => {
-  const classes = useStyles();
   const [isCreatedPattern, setSwitchState] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [buttonIsDisabled, setButtonState] = useState(true);
+  const [screwPatternIsCopied, setScrewPatternIsCopied] = useState(false);
   const {
     motorNozzle,
     screwPatternsByDiameter,
@@ -22,6 +19,7 @@ const MotorNozzle = (props) => {
     setPossibleScrewPatterns,
     motorThickness,
     screwPatterns,
+    copyHeadMotorScrewPattern,
   } = props;
 
   useEffect(() => {
@@ -127,6 +125,10 @@ const MotorNozzle = (props) => {
     setMessageError("");
     return;
   };
+  const onFiedlsChange = (f) => {
+    setScrewPatternIsCopied(false);
+    f();
+  }
   const Form = {
     forms: [
       {
@@ -135,7 +137,7 @@ const MotorNozzle = (props) => {
         label: "Pitch (mm)",
         inputType: "number",
         defaultValue: motorNozzle.screwPattern.pitch,
-        onChange: (value) => props.setCreatedScrewPitch(value),
+        onChange: (value) => onFiedlsChange(() => props.setCreatedScrewPitch(value)),
         hasTooltip: false,
         isVisible: isCreatedPattern,
       },
@@ -145,7 +147,7 @@ const MotorNozzle = (props) => {
         label: "Minimum Minor Diameter (mm)",
         inputType: "number",
         defaultValue: motorNozzle.screwPattern.minMinorDiameter,
-        onChange: (value) => props.setCreatedScrewMinMinorDiameter(value),
+        onChange: (value) => onFiedlsChange(() => props.setCreatedScrewMinMinorDiameter(value)),
         hasTooltip: false,
         isVisible: isCreatedPattern,
       },
@@ -155,7 +157,7 @@ const MotorNozzle = (props) => {
         label: "Maximum Minor Diameter (mm)",
         inputType: "number",
         defaultValue: motorNozzle.screwPattern.maxMinorDiameter,
-        onChange: (value) => props.setCreatedScrewMaxMinorDiameter(value),
+        onChange: (value) => onFiedlsChange(() => props.setCreatedScrewMaxMinorDiameter(value)),
         hasTooltip: false,
         isVisible: isCreatedPattern,
       },
@@ -165,7 +167,7 @@ const MotorNozzle = (props) => {
         label: "Minimum Major Diameter (mm)",
         inputType: "number",
         defaultValue: motorNozzle.screwPattern.maxMajorDiameter,
-        onChange: (value) => props.setCreatedScrewMinMajorDiameter(value),
+        onChange: (value) => onFiedlsChange(() => props.setCreatedScrewMinMajorDiameter(value)),
         hasTooltip: false,
         isVisible: isCreatedPattern,
       },
@@ -175,7 +177,7 @@ const MotorNozzle = (props) => {
         label: "Maximum Major Diameter (mm)",
         inputType: "number",
         defaultValue: motorNozzle.screwPattern.maxMajorDiameter,
-        onChange: (value) => props.setCreatedScrewMaxMajorDiameter(value),
+        onChange: (value) => onFiedlsChange(() => props.setCreatedScrewMaxMajorDiameter(value)),
         hasTooltip: false,
         isVisible: isCreatedPattern,
       },
@@ -185,7 +187,7 @@ const MotorNozzle = (props) => {
         label: "Screw Type",
         inputType: "number",
         defaultValue: motorNozzle.screwPattern.id,
-        onChange: (value) => props.setSelectedScrew(value),
+        onChange: (value) => onFiedlsChange(() => props.setSelectedScrew(value)),
         hasTooltip: false,
         isVisible: !isCreatedPattern,
         selectOptions: screwPatternsByDiameter,
@@ -196,7 +198,7 @@ const MotorNozzle = (props) => {
         label: "Screw Height (mm)",
         inputType: "number",
         defaultValue: motorNozzle.screwHeight,
-        onChange: (value) => props.setScrewHeight(value),
+        onChange: (value) => onFiedlsChange(() => props.setScrewHeight(value)),
         hasTooltip: false,
         isVisible: true,
       },
@@ -205,8 +207,8 @@ const MotorNozzle = (props) => {
         id: "hm-internal-height",
         label: "Internal Height (mm)",
         inputType: "number",
-        defaultValue: motorNozzle.internalHeadHeight,
-        onChange: (value) => props.setInternalHeight(value),
+        defaultValue: motorNozzle.internalHeight,
+        onChange: (value) => onFiedlsChange(() => props.setInternalHeight(value)),
         hasTooltip: false,
         isVisible: true,
       },
@@ -216,7 +218,7 @@ const MotorNozzle = (props) => {
         label: "After Screw Height (mm)",
         inputType: "number",
         defaultValue: motorNozzle.afterScrewHeight,
-        onChange: (value) => props.setAfterScrewHeight(value),
+        onChange: (value) => onFiedlsChange(() => props.setAfterScrewHeight(value)),
         hasTooltip: false,
         isVisible: true,
       },
@@ -225,8 +227,8 @@ const MotorNozzle = (props) => {
         id: "hm-external-height",
         label: "External Height (mm)",
         inputType: "number",
-        defaultValue: motorNozzle.externalHeadHeight,
-        onChange: (value) => props.setExternalHeight(value),
+        defaultValue: motorNozzle.externalHeight,
+        onChange: (value) => onFiedlsChange(() => props.setExternalHeight(value)),
         hasTooltip: false,
         isVisible: true,
       },
@@ -235,8 +237,8 @@ const MotorNozzle = (props) => {
         id: "hm-internal-major-radius",
         label: "Internal Major Radius (mm)",
         inputType: "number",
-        defaultValue: motorNozzle.internalRadius,
-        onChange: (value) => props.setInternalMajorRadius(value),
+        defaultValue: motorNozzle.internalMajorRadius,
+        onChange: (value) => onFiedlsChange(() => props.setInternalMajorRadius(value)),
         hasTooltip: false,
         isVisible: true,
       },
@@ -246,21 +248,34 @@ const MotorNozzle = (props) => {
         label: "Internal Minor Radius (mm)",
         inputType: "number",
         defaultValue: motorNozzle.internalMinorRadius,
-        onChange: (value) => props.setInternalMinorRadius(value),
+        onChange: (value) => onFiedlsChange(() => props.setInternalMinorRadius(value)),
         hasTooltip: false,
         isVisible: true,
       },
     ],
     hasSwitch: true,
     hasButtom: true,
-    switch: {
+    switch: [
+      {
       checked: isCreatedPattern,
       onChange: () => setSwitchState(!isCreatedPattern),
       name: "checkedB",
       label: "Own Pattern",
       tooltipTitle: "Define your own screw pattern.",
       tooltipPlaceholder: "bottom",
-    },
+      },
+      {
+      checked: screwPatternIsCopied,
+      onChange: () => {
+        copyHeadMotorScrewPattern();
+        setScrewPatternIsCopied(!screwPatternIsCopied);
+      },
+      name: "checkedB",
+      label: "Copy Motor Head Pattern",
+      tooltipTitle: "Use the same pattern used in the Motor Head screw.",
+      tooltipPlaceholder: "bottom",
+      }
+    ],
     bottom: {
       disabled: buttonIsDisabled,
       label: "Calculate",
@@ -269,15 +284,9 @@ const MotorNozzle = (props) => {
       tooltipPlaceholder: "bottom",
     },
   };
-  console.log(Form);
-
   return (
-    <div>
-      <div className={classes.root}>
-        <Paper>
-          <FormBuilder formProps={Form} />
-        </Paper>
-      </div>
+    <div className="Form-Base-Paper">
+      <FormBuilder formProps={Form} />
     </div>
   );
 };

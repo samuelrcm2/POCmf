@@ -20,6 +20,7 @@ class MotorChain (ProjectHandler):
         self.nozzleReinforcementThickness: float = None
         self.hasAditionalHeatStress: bool = motorChain['hasAditionalHeatStress']
         self.additionalHeatStress: HeatEffect = HeatEffect(motorChain['temperatureVariation']) if motorChain['temperatureVariation'] is not None else None
+        self.material: Material = None
 
     def __str__(self):
         return f"Motor chain properties: \n \
@@ -42,13 +43,16 @@ class MotorChain (ProjectHandler):
         self.nozzleReinforcementThickness = 2.5 * self.thickness
 
     def calculateAdditionHeatStress (self):
-        material = \
-            MaterialsDomain.Materials.getMaterialById(self.materialId)
-        self.calculateHeatMaxRadialStress(material)
-        self.calculateHeatLongitudinalStress(material)
-        self.calculateHeatCircumferentialStress(material)
+        self.calculateHeatMaxRadialStress()
+        self.calculateHeatLongitudinalStress()
+        self.calculateHeatCircumferentialStress()
 
     def calculateSM(self):
-        material = \
-            MaterialsDomain.Materials.getMaterialById(self.materialId)
-        self.SM = material['yeldStrength']/self.vonMisesSress
+        self.SM = self.material['yeldStrength']/self.vonMisesSress
+
+    def getThermicalS(self):
+        E = self.material['elasticityModule']
+        a = self.material['thermalExpansioCoeficient']
+        v = self.material['poissonRatio']
+        dT = self.additionalHeatStress.temperatureVariation
+        return (E*a*dT)/(2*(1-v))

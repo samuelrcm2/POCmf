@@ -24,6 +24,7 @@ const HeadMotor = (props) => {
   const [messageError, setMessageError] = useState("");
   const [buttonIsDisabled, setButtonState] = useState(true);
   const [isCreatedPattern, setSwitchState] = useState(false);
+  const [messageInternalMajorRadiusError, setMessageInternalMajorRadiusError] = useState("");
 
   useEffect(() => {
     if (isNilOrEmpty(screwPatterns)) {
@@ -41,6 +42,11 @@ const HeadMotor = (props) => {
   }, [motorThickness, motorInternalRadius, screwPatterns]);
 
   const checkIfHasData = () => {
+    if(!IsScrewMeasurementsOk() || !IsInternalMajorRadiusOk()) {
+      setButtonState(true);
+      return;
+    }
+
     if (isNilOrEmpty(headMotor.screwHeight)) {
       setMessageError("Please, select a Screw Height.");
       setButtonState(true);
@@ -119,6 +125,50 @@ const HeadMotor = (props) => {
     return;
   };
 
+  const IsScrewMeasurementsOk = () => {
+    if(isNilOrEmpty(headMotor.screwHeight) ||
+      isNilOrEmpty(headMotor.internalHeadHeight) ||
+      isNilOrEmpty(headMotor.afterScrewHeight))
+        return true;
+
+    if(headMotor.internalHeadHeight >= (headMotor.screwHeight + headMotor.afterScrewHeight))
+      return true;
+
+    return false;
+  } 
+
+  const IsInternalMajorRadiusOk = () => {
+    if(isNilOrEmpty(headMotor.internalRadius) ||
+    isNilOrEmpty(motorThickness) ||
+    isNilOrEmpty(motorInternalRadius)) {
+      return true;
+    }
+
+    if(headMotor.internalRadius > (motorThickness + motorInternalRadius)) {
+      return false;
+    }
+
+    if(headMotor.internalRadius <= headMotor.internalMinorRadius) {
+      return false;
+    }
+    return true;
+    }
+
+  const getnternalMajorRadiusErrorMessage = () => {
+    if(isNilOrEmpty(headMotor.internalRadius) ||
+    isNilOrEmpty(motorThickness) ||
+    isNilOrEmpty(motorInternalRadius)) 
+      return "";
+
+    if(headMotor.internalRadius > (motorThickness + motorInternalRadius)) 
+      return "Internal Major Radius must be smaller than (motor chain thickness + motor chain internal radius)";
+
+    if(headMotor.internalRadius <= headMotor.internalMinorRadius) 
+      return"Internal Major Radius must be higher than Internal Minor Radius";
+
+    return "";
+  }
+
   const DefinePossibleScrewPatterns = () => {
     if (!motorThickness || !motorInternalRadius) return;
     let externalRadius = motorThickness + motorInternalRadius;
@@ -134,7 +184,7 @@ const HeadMotor = (props) => {
         : possibleScrewPatterns;
     setPossibleScrewPatterns(possibleScrewPatterns);
   };
-
+  
   const HandleHeadMotorCalculation = () => {
     headMotor.workPressure = motorWorkPressure;
     headMotor.internalRadius = motorInternalRadius;
@@ -154,6 +204,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setCreatedScrewPitch(value),
         hasTooltip: false,
         isVisible: isCreatedPattern,
+        error: false,
+        helperText: ""
       },
       {
         type: "TextField",
@@ -164,6 +216,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setCreatedScrewMinMinorDiameter(value),
         hasTooltip: false,
         isVisible: isCreatedPattern,
+        error: false,
+        helperText: ""
       },
       {
         type: "TextField",
@@ -174,6 +228,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setCreatedScrewMaxMinorDiameter(value),
         hasTooltip: false,
         isVisible: isCreatedPattern,
+        error: false,
+        helperText: ""
       },
       {
         type: "TextField",
@@ -184,6 +240,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setCreatedScrewMinMajorDiameter(value),
         hasTooltip: false,
         isVisible: isCreatedPattern,
+        error: false,
+        helperText: ""
       },
       {
         type: "TextField",
@@ -194,6 +252,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setCreatedScrewMaxMajorDiameter(value),
         hasTooltip: false,
         isVisible: isCreatedPattern,
+        error: false,
+        helperText: ""
       },
       {
         type: "Select",
@@ -205,6 +265,8 @@ const HeadMotor = (props) => {
         hasTooltip: false,
         isVisible: !isCreatedPattern,
         selectOptions: screwPatternsByDiameter,
+        error: false,
+        helperText: ""
       },
       {
         type: "TextField",
@@ -215,6 +277,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setScrewHeight(value),
         hasTooltip: false,
         isVisible: true,
+        error: !IsScrewMeasurementsOk(),
+        helperText: IsScrewMeasurementsOk()? "" : "Internal Height must be higher than (screw height + after screw height)"
       },
       {
         type: "TextField",
@@ -225,6 +289,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setInternalHeight(value),
         hasTooltip: false,
         isVisible: true,
+        error: !IsScrewMeasurementsOk(),
+        helperText: IsScrewMeasurementsOk()? "" : "Internal Height must be higher than (screw height + after screw height)"
       },
       {
         type: "TextField",
@@ -235,6 +301,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setAfterScrewHeight(value),
         hasTooltip: false,
         isVisible: true,
+        error: !IsScrewMeasurementsOk(),
+        helperText: IsScrewMeasurementsOk()? "" : "Internal Height must be higher than (screw height + after screw height)"
       },
       {
         type: "TextField",
@@ -245,6 +313,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setExternalHeight(value),
         hasTooltip: false,
         isVisible: true,
+        error: false,
+        helperText: ""
       },
       {
         type: "TextField",
@@ -255,6 +325,8 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setInternalRadius(value),
         hasTooltip: false,
         isVisible: true,
+        error: !IsInternalMajorRadiusOk(),
+        helperText: getnternalMajorRadiusErrorMessage()
       },
       {
         type: "TextField",
@@ -265,18 +337,20 @@ const HeadMotor = (props) => {
         onChange: (value) => props.setInternalMinorRadius(value),
         hasTooltip: false,
         isVisible: true,
+        error: false,
+        helperText: ""
       },
     ],
     hasSwitch: true,
     hasButtom: true,
-    switch: {
+    switch: [{
       checked: isCreatedPattern,
       onChange: () => setSwitchState(!isCreatedPattern),
       name: "checkedB",
       label: "Own Pattern",
       tooltipTitle: "Define your own screw pattern.",
       tooltipPlaceholder: "bottom",
-    },
+    }],
     bottom: {
       disabled: buttonIsDisabled,
       label: "Calculate",

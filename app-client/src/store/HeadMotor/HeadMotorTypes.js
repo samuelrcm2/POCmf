@@ -12,33 +12,33 @@ export class ScrewPattern {
     this.name = screwPattern
       ? screwPattern.name
         ? screwPattern.name
-        : ""
-      : "";
+        : "M40 X 1.5"
+      : "M40 X 1.5";
     this.pitch = screwPattern
       ? screwPattern.pitch
         ? screwPattern.pitch
-        : ""
-      : "";
+        : 1.5
+      : 1.5;
     this.minMinorDiameter = screwPattern
       ? screwPattern.minMinorDiameter
         ? screwPattern.minMinorDiameter
-        : ""
-      : "";
+        : 38.376
+      : 38.376;
     this.maxMinorDiameter = screwPattern
       ? screwPattern.maxMinorDiameter
         ? screwPattern.maxMinorDiameter
-        : ""
-      : "";
+        : 38.676
+      : 38.676;
     this.minMajorDiameter = screwPattern
       ? screwPattern.minMajorDiameter
         ? screwPattern.minMajorDiameter
-        : ""
-      : "";
+        : 40
+      : 40;
     this.maxMajorDiameter = screwPattern
       ? screwPattern.maxMajorDiameter
         ? screwPattern.maxMajorDiameter
-        : ""
-      : "";
+        : 40.416
+      : 40.416;
   }
 }
 
@@ -58,18 +58,18 @@ export class HeadMotor {
     this.screwHeight = headMotor
       ? headMotor.screwHeight
         ? headMotor.screwHeight
-        : ""
-      : "";
+        : 10
+      : 10;
     this.internalHeadHeight = headMotor
       ? headMotor.internalHeadHeight
         ? headMotor.internalHeadHeight
-        : ""
-      : "";
+        : 20
+      : 20;
     this.externalHeadHeight = headMotor
       ? headMotor.externalHeadHeight
         ? headMotor.externalHeadHeight
-        : ""
-      : "";
+        : 5
+      : 5;
     this.screwPattern = headMotor
       ? headMotor.screwPattern
         ? headMotor.screwPattern
@@ -83,13 +83,13 @@ export class HeadMotor {
     this.internalRadius = headMotor
       ? headMotor.internalRadius
         ? headMotor.internalRadius
-        : ""
-      : "";
+        : 21.05
+      : 21.05;
     this.internalMinorRadius = headMotor
       ? headMotor.internalMinorRadius
         ? headMotor.internalMinorRadius
-        : ""
-      : "";
+        : 20.5
+      : 20.5;
     this.thickness = headMotor
       ? headMotor.thickness
         ? headMotor.thickness
@@ -98,8 +98,8 @@ export class HeadMotor {
     this.afterScrewHeight = headMotor
       ? headMotor.afterScrewHeight
         ? headMotor.afterScrewHeight
-        : ""
-      : "";
+        : 5
+      : 5;
     this.materialId = headMotor
       ? headMotor.materialId
         ? headMotor.materialId

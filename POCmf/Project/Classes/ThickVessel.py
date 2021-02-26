@@ -1,4 +1,5 @@
 from Project.Classes.MotorChain import MotorChain
+from Project.Domain import MaterialsDomain
 import math
 from scipy import optimize
 
@@ -12,10 +13,10 @@ class ThickVessel (MotorChain):
         self.circumferentialStress = p * ((ri ** 2) / (re ** 2 - ri ** 2 )) \
             * (1 + (re ** 2)/(ri ** 2))
 
-    def calculateHeatCircumferentialStress (self, material):
-        E = material['elasticityModule']
-        a = material['thermalExpansioCoeficient']
-        v = material['poissonRatio']
+    def calculateHeatCircumferentialStress (self):
+        E = self.material['elasticityModule']
+        a = self.material['thermalExpansioCoeficient']
+        v = self.material['poissonRatio']
         ri = self.internalRadius
         re = ri + self.thickness
         dT = self.additionalHeatStress.temperatureVariation
@@ -29,7 +30,7 @@ class ThickVessel (MotorChain):
         self.radialStress = p * ((ri ** 2) / (re ** 2 - ri ** 2 )) \
             * (1 - (re ** 2)/(ri ** 2))
 
-    def calculateHeatMaxRadialStress (self, material):
+    def calculateHeatMaxRadialStress (self):
         self.additionalHeatStress.radialStress = 0
 
 
@@ -39,20 +40,23 @@ class ThickVessel (MotorChain):
         re = self.internalRadius + self.thickness
         self.longitudinalStress = (p * ri ** 2)/((re ** 2)- (ri ** 2))
 
-    def calculateHeatLongitudinalStress (self, material):
-        E = material['elasticityModule']
-        a = material['thermalExpansioCoeficient']
-        v = material['poissonRatio']
+    def calculateHeatLongitudinalStress (self):
+        E = self.material['elasticityModule']
+        a = self.material['thermalExpansioCoeficient']
+        v = self.material['poissonRatio']
         ri = self.internalRadius
         re = ri + self.thickness
         dT = self.additionalHeatStress.temperatureVariation
         self.additionalHeatStress.longitudinalStress = (E*a*dT)/(2*(1-v))  \
             * ((2*(re/ri) ** 2)/(-1 + (re/ri) ** 2) - (1/math.log(re/ri)))
 
-    def calculateThickness (self, initialThicknessValue):
-        #Using Newton's Method
-        externalRadius = optimize.newton(self.calculateMaxCircunferentialStressByExternalRadius, (initialThicknessValue + self.internalRadius))
-        self.thickness = externalRadius - self.internalRadius
+    def calculateThickness (self):
+        radiusRatio = optimize.newton(self.calculateVonMissesByRadiusRatio,1.1)
+        self.thickness = (radiusRatio * self.internalRadius) - self.internalRadius
+
+    def calculateThicknessWithHeatAddition (self):
+        radiusRatio = optimize.newton(self.calculateVonMissesByRadiusRatioWithHeatAddition, 1.1)
+        self.thickness = (radiusRatio * self.internalRadius) - self.internalRadius
 
     def calculatePrincipalStresses (self):
         self.calculateCircumferentialStress()
@@ -61,22 +65,42 @@ class ThickVessel (MotorChain):
         self.calculateNozzleReinforcementThickness()
         if self.hasAditionalHeatStress:
             self.calculateAdditionHeatStress()
-
         self.calculateVonMisesStress()
     
-    def calculateMaxCircunferentialStressByExternalRadius(self, externalRadius):
-        return (self.workPressure * ((self.internalRadius ** 2 + externalRadius ** 2) / (externalRadius ** 2 - self.internalRadius ** 2 )) ) - self.circumferentialStress
+    def calculateVonMissesByRadiusRatio(self, x):
+        p = self.workPressure 
+        sigma_e = self.material['yeldStrength']/1.5
+        return ((math.sqrt(3) * p * (x**2))/((x**2) -1)) - sigma_e
+
+    def calculateVonMissesByRadiusRatioWithHeatAddition(self, x):
+        p = self.workPressure 
+        sigma_e = self.material['yeldStrength']/1.5
+        S = self.getThermicalS()
+        f1 = ((x**4)*(3*p**2 + 6*p*S + 4*S**2))/((x**2 -1)**2)
+        f2 = (S*(x**2)*(4*S + 3*p))/((x**2 -1)*math.log(x))
+        f3 = (S**2)/(math.log(x)**2)
+        return math.sqrt(f1 - f2 + f3) - sigma_e
+
 
     @classmethod
     def motorChainSMCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
+        material = material = \
+            MaterialsDomain.Materials.getMaterialById(newMotorChain.materialId)
+        newMotorChain.material = material
         newMotorChain.calculatePrincipalStresses()
         newMotorChain.calculateSM()
         return newMotorChain
     
 
     @classmethod
-    def motorChainThicknessCalculation(cls, motorChain, initialThicknessValue):
+    def motorChainThicknessCalculation(cls, motorChain):
         newMotorChain = cls(motorChain)
-        newMotorChain.calculateThickness(initialThicknessValue)
+        material = material = \
+            MaterialsDomain.Materials.getMaterialById(newMotorChain.materialId)
+        newMotorChain.material = material
+        if newMotorChain.hasAditionalHeatStress:
+            newMotorChain.calculateThicknessWithHeatAddition()
+        else:
+            newMotorChain.calculateThickness()
         return newMotorChain

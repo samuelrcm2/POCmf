@@ -22,7 +22,7 @@ def handleMotorChainCalculationTypes (motorChain, calculationType):
     if calculationType == Enums.CalculationType.THICKNESS:
         resultMotorChain = newMotorChain.motorChainThicknessCalculation(motorChain)
         if resultMotorChain.thickness / resultMotorChain.internalRadius > 0.1:
-            resultMotorChain = ThickVessel.motorChainThicknessCalculation(motorChain, resultMotorChain.thickness )
+            resultMotorChain = ThickVessel.motorChainThicknessCalculation(motorChain)
         return { "thickness": resultMotorChain.thickness}
 
 

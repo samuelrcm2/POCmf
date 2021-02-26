@@ -24,18 +24,18 @@ export class MotorChain {
     this.internalRadius = motorChain
       ? motorChain.internalRadius
         ? motorChain.internalRadius
-        : null
-      : null;
+        : 20
+      : 20;
     this.height = motorChain
       ? motorChain.height
         ? motorChain.height
-        : null
-      : null;
+        : 200
+      : 200;
     this.thickness = motorChain
       ? motorChain.thickness
         ? motorChain.thickness
-        : null
-      : null;
+        : 5
+      : 5;
     this.volume = motorChain
       ? motorChain.volume
         ? motorChain.volume
@@ -44,13 +44,13 @@ export class MotorChain {
     this.workPressure = motorChain
       ? motorChain.workPressure
         ? motorChain.workPressure
-        : null
-      : null;
+        : 40
+      : 40;
     this.materialId = motorChain
       ? motorChain.materialId
         ? motorChain.materialId
-        : ""
-      : "";
+        : 1
+      : 1;
       this.admissiveStress = motorChain
       ? motorChain.admissiveStress
         ? motorChain.admissiveStress

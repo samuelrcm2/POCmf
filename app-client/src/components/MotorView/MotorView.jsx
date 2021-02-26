@@ -25,84 +25,49 @@ const useStyles = () => ({
 
 class MotorView extends Component {
   checkIfHasData = () => {
-    if (this.isValueValid(this.props.calculationType)) return false;
+    if (this.isValueInvalid(this.props.motorChain.internalRadius)) return false;
 
-    if (this.isValueValid(this.props.motorChain.internalRadius)) return false;
-
-    if (this.isValueValid(this.props.motorChain.height)) return false;
+    if (this.isValueInvalid(this.props.motorChain.height)) return false;
 
     if (
       this.props.calculationType !== CalculationTypes.THICKNESS &&
-      this.isValueValid(this.props.motorChain.thickness)
+      this.isValueInvalid(this.props.motorChain.thickness)
     )
       return false;
 
-    if (this.props.calculationType !== CalculationTypes.MAIN_STRESSES) {
-      if (
-        this.isValueValid(this.props.motorChain.longitudinalStress) ||
-        this.isValueValid(this.props.motorChain.circumferentialStress)
-      )
-        return false;
+    if (this.isValueInvalid(this.props.headMotor.screwHeight)) return false;
 
-      if (
-        this.checkIfMotorNeedRadiusStressField() &&
-        this.isValueValid(this.props.motorChain.radialStress)
-      )
-        return false;
-    }
-
-    if (this.isValueValid(this.props.headMotor.screwHeight)) return false;
-
-    if (this.isValueValid(this.props.headMotor.internalHeadHeight))
+    if (this.isValueInvalid(this.props.headMotor.internalHeadHeight))
       return false;
 
-    if (this.isValueValid(this.props.headMotor.externalHeadHeight))
+    if (this.isValueInvalid(this.props.headMotor.externalHeadHeight))
       return false;
 
     if (isNilOrEmpty(this.props.headMotor.afterScrewHeight)) return false;
 
-    if (this.isValueValid(this.props.headMotor.internalRadius)) return false;
+    if (this.isValueInvalid(this.props.headMotor.internalRadius)) return false;
 
-    if (this.isValueValid(this.props.headMotor.internalMinorRadius))
+    if (this.isValueInvalid(this.props.headMotor.internalMinorRadius))
       return false;
 
     if (isNilOrEmpty(this.props.motorNozzle.afterScrewHeight)) return false;
 
-    if (this.isValueValid(this.props.motorNozzle.screwHeight)) return false;
+    if (this.isValueInvalid(this.props.motorNozzle.screwHeight)) return false;
 
-    if (this.isValueValid(this.props.motorNozzle.internalHeight)) return false;
+    if (this.isValueInvalid(this.props.motorNozzle.internalHeight)) return false;
 
-    if (this.isValueValid(this.props.motorNozzle.externalHeight)) return false;
+    if (this.isValueInvalid(this.props.motorNozzle.externalHeight)) return false;
 
-    if (this.isValueValid(this.props.motorNozzle.internalMajorRadius))
+    if (this.isValueInvalid(this.props.motorNozzle.internalMajorRadius))
       return false;
 
-    if (this.isValueValid(this.props.motorNozzle.internalMinorRadius))
+    if (this.isValueInvalid(this.props.motorNozzle.internalMinorRadius))
       return false;
 
     return true;
   };
 
-  isValueValid = (value) => isNilOrEmpty(value) || value === 0;
-
-  checkIfMotorNeedRadiusStressField = () => {
-    if (this.props.calculationType === CalculationTypes.THICKNESS) return true;
-    if (
-      isNilOrEmpty(this.props.motorChain.thickness) ||
-      isNilOrEmpty(this.props.motorChain.internalRadius)
-    )
-      return false;
-    if (
-      this.props.motorChain.thickness === 0 ||
-      this.props.motorChain.internalRadius === 0
-    )
-      return false;
-
-    return (
-      this.props.motorChain.thickness / this.props.motorChain.internalRadius >
-      0.1
-    );
-  };
+  isValueInvalid = (value) => isNilOrEmpty(value) || value === 0;
 
   createMotorDraw = () => {
     if (!this.checkIfHasData()) {
@@ -193,7 +158,7 @@ class MotorView extends Component {
       this.props.motorChain.internalRadius -
       this.props.motorNozzle.internalMinorRadius;
     const NOZZLE_INTERNAL_MINIMUM_RADIUS_RIGHT =
-      MIN_X +
+      MIN_X + 
       this.props.motorChain.thickness +
       this.props.motorChain.internalRadius +
       this.props.motorNozzle.internalMinorRadius;
@@ -203,8 +168,8 @@ class MotorView extends Component {
         this.props.motorNozzle.internalHeight);
     const NOZZLE_FINAL_MINIMUM_RADIUS_HEIGHT =
       NOZZLE_MAXIMUM_HEIGHT + this.props.motorNozzle.afterScrewHeight;
-    const MOTOR_CHAIN_LEFT_X = MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT;
-    const MOTOR_CHAIN_RIGHT_X = MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT;
+      const MOTOR_CHAIN_LEFT_X = MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_LEFT;
+      const MOTOR_CHAIN_RIGHT_X = MOTOR_HEAD_INTERNAL_MINIMUM_RADIUS_RIGHT;
     const MOTOR_CHAIN_TOP_Y = MOTOR_HEAD_MAXIMUM_HEIGHT;
     const MOTOR_CHAIN_BOTTOM_Y = NOZZLE_MAXIMUM_HEIGHT;
 

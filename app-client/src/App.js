@@ -115,11 +115,11 @@ const App = () => {
                       label="Motor Head"
                       {...a11yProps(1)}
                     />
-                    {/* <Tab
+                    <Tab
                       className={classes.root}
                       label="Motor Nozzle"
                       {...a11yProps(2)}
-                    /> */}
+                    />
                   </Tabs>
                 </AppBar>
                 <TabPanel value={appBarValue} index={0}>
@@ -128,9 +128,9 @@ const App = () => {
                 <TabPanel value={appBarValue} index={1}>
                   <HeadMotorComponent />
                 </TabPanel>
-                {/* <TabPanel value={appBarValue} index={2}>
+                <TabPanel value={appBarValue} index={2}>
                   <MotorNozzleComponent />
-                </TabPanel> */}
+                </TabPanel>
                 <CalculatedDataComponent />
               </div>
               </div>

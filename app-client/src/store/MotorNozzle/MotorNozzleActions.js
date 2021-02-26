@@ -148,3 +148,10 @@ export const setCreatedScrewMaxMajorDiameter = (value) => {
     payload: Number(value),
   };
 };
+
+export const copyHeadMotorScrewPattern = () => {
+    return {
+      type: MotorNozzleActionsType.HM_SCREW_PATTERN_COPIED,
+      payload: store.getState().headMotor
+    }
+}
