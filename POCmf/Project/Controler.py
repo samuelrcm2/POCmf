@@ -5,6 +5,7 @@ from Project.Domain import HeadChainDomain
 from Project.Domain import MaterialsDomain
 from Project.Domain import MotorChainDomain
 from Project.Domain import ScrewDomain
+from Project.Domain import PlotScriptsDomain
 from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
@@ -68,12 +69,17 @@ class HeadMotor(Resource):
         newHeadMotor = HeadChainDomain.defineScrewBySelectedScrew(data)
         return newHeadMotor, 200
 
+class Plot(Resource):
+    def get(self):
+        PlotScriptsDomain.plot()
+
 api.add_resource(MotorChain, '/motorChain/')
 api.add_resource(AllMaterials, '/materials/getAllMaterials')
 api.add_resource(MaterialsById, '/materials/getMaterialById/<int:Id>')
 api.add_resource(AllScrewPatterns, '/screwPatterns/')
 api.add_resource(ScrewPatternByDiameter, '/screwPatterns/getByDiamter/')
 api.add_resource(HeadMotor, '/headMotor/maxScrewStress/')
+api.add_resource(Plot, '/plot')
 
 if __name__ == "__main__" :
     app.run(port=5000, Debug=True)
